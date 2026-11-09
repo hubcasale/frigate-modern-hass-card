@@ -78,7 +78,7 @@ default_view: single     # or 'grid'
 | `default_view` | string | `single` | `single` or `grid` |
 | `theme` | string | `dark` | `dark`, `light`, `auto` |
 | `time_format` | string | `auto` | `auto` follows the 12/24 hour setting in your Home Assistant profile; `12h` or `24h` to override |
-| `language` | string | `auto` | `auto` follows your Home Assistant language; `en` or `it` to force one (see [Languages](#languages)) |
+| `language` | string | `auto` | `auto` follows your Home Assistant language; a language code such as `en` or `it` to force one (see [Languages](#languages)) |
 | `accent_color` | string | none | Custom accent colour (hex) |
 | `bg_color` | string | none | Custom background colour (hex) |
 | `window_hours` | number | `6` | Hours the timeline shows when the card opens. Zoom and drag to see more |
@@ -150,9 +150,9 @@ cameras:
 
 ### Languages
 
-The card's own text follows your Home Assistant language. English and Italian are included; any other language falls back to English. Dates and times were already localised.
+The card's own text follows your Home Assistant language. Included: English, Italiano, Deutsch, Français, Español, Português, Nederlands and Polski. Any other language falls back to English. Dates and times were already localised. Set `language: it` (or another code) to force one.
 
-To add a language, copy the `IT` block in `src/i18n.js`, translate the values (keep `{n}` placeholders), add it to `LANGS`, then run `python build.py`.
+To add or fix a language, copy `src/lang-it.js` to `src/lang-xx.js`, translate the values (keep `{n}` placeholders and `<b>`/`<br>` tags), list the file in `build.py` and in `LANGS` in `src/i18n.js`, then run `python tools/check-lang.py` and `python build.py`. Portuguese uses European wording for every variant, including `pt-BR`.
 
 Note: the language is shared by every card on the page, so two cards set to different languages will not both be honoured.
 

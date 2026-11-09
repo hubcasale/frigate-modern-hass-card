@@ -16,6 +16,13 @@ import re, os, sys, time
 
 MODULES = [
     'src/constants.js',
+    'src/lang-it.js',
+    'src/lang-de.js',
+    'src/lang-fr.js',
+    'src/lang-es.js',
+    'src/lang-pt.js',
+    'src/lang-nl.js',
+    'src/lang-pl.js',
     'src/i18n.js',
     'src/styles.js',
     'src/go2rtc-player.js',
