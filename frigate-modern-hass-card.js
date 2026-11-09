@@ -124,6 +124,215 @@ function camDisplayName(c) { return c.name || (c.entity||'').replace(/^camera\./
 
 // ── main card ────────────────────────────────────────────────
 
+// i18n.js — the language of the card's own text.
+//
+// The English wording in the source is the key. tr('Recent events') returns the
+// text unchanged for English, and for any language with no entry yet, so a
+// missing translation shows English rather than a blank or a key.
+//
+// To add a language, copy the IT block below, translate the values, and add it
+// to LANGS (the editor offers whatever is listed there). {n} style
+// placeholders are filled in by tr(); keep them in the translation.
+
+const IT = {
+  // toolbar and shell
+  'Show one camera': 'Mostra una telecamera',
+  'Show all cameras': 'Mostra tutte le telecamere',
+  'Single': 'Singola',
+  'Grid': 'Griglia',
+  'Fullscreen': 'Schermo intero',
+  'Show events panel': 'Mostra il pannello eventi',
+  'Hide events panel': 'Nascondi il pannello eventi',
+  'All cameras': 'Tutte le telecamere',
+  'Auto-rotate': 'Rotazione automatica',
+  'Auto-rotate off': 'Rotazione automatica disattivata',
+  'Rotating every {n}s': 'Cambio telecamera ogni {n} s',
+  'Close': 'Chiudi',
+  'Cameras': 'Telecamere',
+  'Camera': 'Telecamera',
+  'Connecting…': 'Connessione…',
+  'Live': 'Diretta',
+  'Back to live': 'Torna alla diretta',
+  'Back to where you were before zooming in': 'Torna a dove eri prima dello zoom',
+  'Now': 'Ora',
+  'now': 'ora',
+  'Back to the last hours up to now': 'Torna alle ultime ore fino a ora',
+  'Filter': 'Filtro',
+  'Calendar': 'Calendario',
+  'Drag · scroll=zoom · Shift+scroll=pan': 'Trascina · rotella=zoom · Maiusc+rotella=sposta',
+  'Events': 'Eventi',
+  'Online': 'Online',
+  'Offline': 'Offline',
+  'Events · Recordings': 'Eventi · Registrazioni',
+  'Loading…': 'Caricamento…',
+  'new ✦': 'nuovo ✦',
+  // tabs
+  'Recent events': 'Eventi recenti',
+  'Recordings': 'Registrazioni',
+  'Clips': 'Clip',
+  'Snapshots': 'Istantanee',
+  'Reviews': 'Revisioni',
+  'Kept events': 'Eventi salvati',
+  'Kept': 'Salvati',
+  // players
+  'No recording for this period': 'Nessuna registrazione per questo periodo',
+  'Mute': 'Disattiva audio',
+  'Unmute': 'Attiva audio',
+  'Download from': 'Scarica da',
+  '↓ Download': '↓ Scarica',
+  'Download clip': 'Scarica la clip',
+  'Download snapshot': 'Scarica l’istantanea',
+  'Could not save — check Frigate port config.': 'Impossibile salvare: controlla la porta di Frigate nella configurazione.',
+  // filter panel and lists
+  'Label': 'Etichetta',
+  'Zone': 'Zona',
+  'Show': 'Mostra',
+  'All': 'Tutti',
+  '★ Favorites': '★ Preferiti',
+  'Recording': 'Registrazione',
+  'Latest event': 'Ultimo evento',
+  'clip': 'clip',
+  'snap': 'foto',
+  'No kept events': 'Nessun evento salvato',
+  'star an event to keep it': 'metti la stella a un evento per salvarlo',
+  'No events in this window': 'Nessun evento in questo periodo',
+  '— end —': '— fine —',
+  'scroll for older…': 'scorri per vedere i precedenti…',
+  'No recordings in this window': 'Nessuna registrazione in questo periodo',
+  '· click to seek': '· clicca per spostarti',
+  'No reviews in this window': 'Nessuna revisione in questo periodo',
+  '{n} to review': '{n} da rivedere',
+  'Mark all': 'Segna tutte',
+  'Hide reviewed': 'Nascondi le riviste',
+  'Show reviewed': 'Mostra le riviste',
+  'Nothing to review ✓': 'Niente da rivedere ✓',
+  'tap': 'tocca',
+  // editor
+  'Tile {n} in the grid': 'Riquadro {n} nella griglia',
+  'Select camera': 'Seleziona telecamera',
+  'Display name (optional)': 'Nome visualizzato (facoltativo)',
+  'Tile size in the grid': 'Dimensione del riquadro nella griglia',
+  'Colour of this camera on the grid view timeline': 'Colore di questa telecamera nella timeline della griglia',
+  'Back to the default colour': 'Torna al colore predefinito',
+  'Remove': 'Rimuovi',
+  '· Frigate cameras detected': '· telecamere Frigate trovate',
+  '+ Add camera': '+ Aggiungi telecamera',
+  'Grid layout': 'Disposizione della griglia',
+  'The number is the tile the camera fills in the grid. Pick a camera that is already in another tile to swap the two.':
+    'Il numero è il riquadro che la telecamera occupa nella griglia. Scegli una telecamera già presente in un altro riquadro per scambiare le due.',
+  'Every camera in the grid streams at once, so more cameras means more load on the browser and on Frigate.':
+    'Tutte le telecamere della griglia trasmettono insieme: più telecamere significano più carico sul browser e su Frigate.',
+  'The numbers match the tile numbers beside each camera above. A layout sets the columns and the tile sizes together.':
+    'I numeri corrispondono a quelli dei riquadri accanto a ogni telecamera qui sopra. Una disposizione imposta insieme colonne e dimensioni dei riquadri.',
+  'On a phone, stack the cameras one per row': 'Sul telefono, metti le telecamere una per riga',
+  'Any layout leaves the cameras too small to see on a phone, so this overrides it there. Turn it off to keep the grid on a phone too, for two cameras side by side or a small overview.':
+    'Con qualsiasi disposizione le telecamere sul telefono risultano troppo piccole, quindi qui viene ignorata. Disattivala per mantenere la griglia anche sul telefono, per due telecamere affiancate o una piccola panoramica.',
+  'Title (optional)': 'Titolo (facoltativo)',
+  'My Camera': 'La mia telecamera',
+  'Subtitle': 'Sottotitolo',
+  'View': 'Vista',
+  'Single camera': 'Telecamera singola',
+  'Grid (all cams)': 'Griglia (tutte le telecamere)',
+  'Time format': 'Formato dell’ora',
+  'Follow Home Assistant': 'Come Home Assistant',
+  '12-hour': '12 ore',
+  '24-hour': '24 ore',
+  'Auto-rotate on load': 'Rotazione automatica all’avvio',
+  'Rotate interval (seconds, 0 = use default {n}s)': 'Intervallo di rotazione (secondi, 0 = predefinito {n} s)',
+  'Theme': 'Tema',
+  'Dark': 'Scuro',
+  'Light': 'Chiaro',
+  'Auto (browser)': 'Automatico (browser)',
+  'Colors': 'Colori',
+  'Custom accent': 'Colore d’accento personalizzato',
+  'Custom background': 'Sfondo personalizzato',
+  'Check the box to activate. Uncheck to revert to theme default.':
+    'Spunta la casella per attivare. Togli la spunta per tornare al tema predefinito.',
+  'Hidden tabs': 'Schede nascoste',
+  'Grid columns': 'Colonne della griglia',
+  'Automatic': 'Automatico',
+  '1 (stacked)': '1 (in colonna)',
+  'A camera can occupy more than one tile, so one can be shown larger than the rest. Automatic picks a column count from the number of cameras and the space available: on a tablet that comes to <b>{n}</b> per row. A phone stacks regardless, see below.':
+    'Una telecamera può occupare più riquadri, quindi una può essere mostrata più grande delle altre. Automatico sceglie il numero di colonne in base alle telecamere e allo spazio disponibile: su un tablet sono <b>{n}</b> per riga. Il telefono le mette comunque in colonna, vedi sotto.',
+  '1 camera': '1 telecamera',
+  '{n} cameras': '{n} telecamere',
+  'Events panel': 'Pannello eventi',
+  'Start with the events panel hidden': 'Avvia con il pannello eventi nascosto',
+  'On a wide card the events list sits beside the cameras. Hiding it gives the cameras the full width; a button on the card slides it back in.':
+    'Su una card larga l’elenco eventi sta accanto alle telecamere. Nasconderlo dà alle telecamere tutta la larghezza; un pulsante sulla card lo fa riapparire.',
+  'Live view provider': 'Sorgente della diretta',
+  'Home Assistant stream': 'Flusso di Home Assistant',
+  'go2rtc, low latency (experimental)': 'go2rtc, bassa latenza (sperimentale)',
+  'go2rtc streams via Frigate\'s built-in WebRTC/MSE for much lower latency. Falls back to the Home Assistant stream automatically if it can\'t connect.':
+    'go2rtc trasmette tramite WebRTC/MSE integrato in Frigate, con una latenza molto più bassa. Se non riesce a connettersi, passa automaticamente al flusso di Home Assistant.',
+  'go2rtc transport': 'Trasporto go2rtc',
+  'MSE (recommended)': 'MSE (consigliato)',
+  'WebRTC only': 'Solo WebRTC',
+  'MSE runs entirely over the proxied connection, so it works remotely and in the companion apps. WebRTC can be marginally faster but connects directly to go2rtc, which usually only resolves on the local network.':
+    'MSE passa interamente dalla connessione tramite proxy, quindi funziona anche da remoto e nelle app companion. WebRTC può essere leggermente più veloce ma si collega direttamente a go2rtc, che di solito è raggiungibile solo nella rete locale.',
+  'Maximum camera height': 'Altezza massima delle telecamere',
+  'e.g. 70, blank = automatic': 'es. 70, vuoto = automatica',
+  'As a percentage of the screen height. Leave empty to let the cameras size themselves; a grid uses at most 70% by default. Raise it for a wall display.':
+    'In percentuale dell’altezza dello schermo. Lascia vuoto per far scegliere la dimensione alle telecamere; una griglia usa al massimo il 70% per impostazione predefinita. Aumentalo per un display a parete.',
+  'Window hours': 'Ore mostrate nella timeline',
+  'Language': 'Lingua',
+  'Automatic (Home Assistant language)': 'Automatica (lingua di Home Assistant)',
+  'fits the<br>camera count': 'si adatta alle<br>telecamere',
+  // grid layouts
+  '2 stacked': '2 in colonna',
+  '2 side by side': '2 affiancate',
+  '1 large + 2': '1 grande + 2',
+  '1 large + 5': '1 grande + 5',
+  '1 large + 7': '1 grande + 7',
+  '2 large + 8': '2 grandi + 8',
+};
+
+// Detection labels as Frigate names them.
+const IT_LABELS = {
+  person: 'Persona', car: 'Auto', bicycle: 'Bicicletta', motorcycle: 'Moto',
+  bus: 'Autobus', truck: 'Camion', boat: 'Barca', airplane: 'Aereo', train: 'Treno',
+  bird: 'Uccello', cat: 'Gatto', dog: 'Cane', horse: 'Cavallo', sheep: 'Pecora',
+  cow: 'Mucca', deer: 'Cervo', fox: 'Volpe', rabbit: 'Coniglio', squirrel: 'Scoiattolo',
+  raccoon: 'Procione', package: 'Pacco', face: 'Volto', license_plate: 'Targa',
+  waste_bin: 'Bidone', alert: 'Allarme', detection: 'Rilevamento',
+  Recording: 'Registrazione',
+};
+
+// code → { name shown in the editor, strings, labels }
+const LANGS = {
+  en: { name: 'English' },
+  it: { name: 'Italiano', strings: IT, labels: IT_LABELS },
+};
+
+let _lang = 'en';
+
+// 'it-IT' and 'it_it' both mean 'it'. Anything unknown falls back to English.
+function setLang(code) {
+  const c = String(code || 'en').toLowerCase().split(/[-_]/)[0];
+  _lang = LANGS[c] ? c : 'en';
+}
+function getLang() { return _lang; }
+
+// A language set in the card config wins; otherwise Home Assistant's own.
+function resolveLang(configured, hass) {
+  if (configured && configured !== 'auto') return configured;
+  return hass?.locale?.language || hass?.language
+    || (typeof navigator !== 'undefined' && navigator.language) || 'en';
+}
+
+function tr(s, vars) {
+  let out = LANGS[_lang]?.strings?.[s] ?? s;
+  if (vars) for (const k in vars) out = out.split('{' + k + '}').join(String(vars[k]));
+  return out;
+}
+
+// A detection label (or review severity): translated when known, otherwise
+// capitalised the way the card always did.
+function lab(s) {
+  if (!s) return s;
+  return LANGS[_lang]?.labels?.[s] ?? (s.charAt(0).toUpperCase() + s.slice(1));
+}
+
 // styles.js — card CSS
 // ── styles ───────────────────────────────────────────────────
 const STYLES = `
@@ -1209,6 +1418,8 @@ class FrigateModernHassCard extends HTMLElement {
       hidden_tabs: Array.isArray(config.hidden_tabs) ? config.hidden_tabs : [],
       stream_height: config.stream_height ? Number(config.stream_height) : null,
       theme: ['light','dark','auto'].includes(config.theme) ? config.theme : 'dark',
+      // 'auto' follows Home Assistant's language; otherwise a code from LANGS.
+      language: (config.language && LANGS[config.language]) ? config.language : 'auto',
       accent_color: config.accent_color || null,
       bg_color: config.bg_color || null,
       // Live view source. 'go2rtc' streams via Frigate's built-in go2rtc
@@ -1253,7 +1464,7 @@ class FrigateModernHassCard extends HTMLElement {
   set hass(hass) {
     this._hass = hass;
     if (!this._config) return;
-    if (!this._started) { this._started = true; this._start(); return; }
+    if (!this._started) { this._started = true; this._applyLang(); this._start(); return; }
     // keep active stream in sync
     if (this._engine) {
       try { this._engine.hass = hass; } catch(_) {}
@@ -1270,6 +1481,15 @@ class FrigateModernHassCard extends HTMLElement {
     }
     this._syncStatus();
     if (this._config.theme === 'auto') this._applyCardStyle(); // re-evaluate HA dark mode
+  }
+
+  // The shell is first drawn from setConfig, before Home Assistant has handed
+  // over its language. Draw it again once it is known, but only before the card
+  // has started; after that the language stays put until the next setConfig.
+  _applyLang() {
+    const code = resolveLang(this._config.language, this._hass);
+    if (code === this._langCode) return;
+    this._renderShell();
   }
 
   get _activeCam() { return this._config?.cameras[this._activeCamIdx] || this._config?.cameras[0]; }
@@ -1973,9 +2193,9 @@ class FrigateModernHassCard extends HTMLElement {
     // The word is what the button does, never where you are. Highlighting it as
     // well made it read as the mode you were already in, which is backwards.
     const grid = this._config.cameras.length > 1
-      ? `<button class="tool tool-txt" id="sc-grid" title="${inGrid ? 'Show one camera' : 'Show all cameras'}">${inGrid ? ICONS.live : ICONS.grid}<span>${inGrid ? 'Single' : 'Grid'}</span></button>`
+      ? `<button class="tool tool-txt" id="sc-grid" title="${inGrid ? tr('Show one camera') : tr('Show all cameras')}">${inGrid ? ICONS.live : ICONS.grid}<span>${inGrid ? tr('Single') : tr('Grid')}</span></button>`
       : '';
-    const fs = inGrid ? `<button class="tool" id="sc-fs" title="Fullscreen">${ICONS.expand}</button>` : '';
+    const fs = inGrid ? `<button class="tool" id="sc-fs" title="${tr('Fullscreen')}">${ICONS.expand}</button>` : '';
     // Only meaningful in the wide layout, where the events panel sits beside the
     // cameras. CSS hides it when narrow, since there the browse toggle does this.
     const events = `<button class="tool" id="sc-events"></button>`;
@@ -1988,7 +2208,7 @@ class FrigateModernHassCard extends HTMLElement {
     const btn = this.shadowRoot.querySelector('#sc-events');
     if (btn) {
       btn.innerHTML = this._eventsCollapsed ? ICONS.panelOff : ICONS.panelOn;
-      btn.title = this._eventsCollapsed ? 'Show events panel' : 'Hide events panel';
+      btn.title = this._eventsCollapsed ? tr('Show events panel') : tr('Hide events panel');
     }
   }
   _toggleEvents() {
@@ -2015,7 +2235,7 @@ class FrigateModernHassCard extends HTMLElement {
       if (gridEl) { gridEl.style.display = ''; this._mountGrid(); }
       this._eventsMode = 'all';
       const lbl = this.shadowRoot.querySelector('#list-label');
-      if (lbl) lbl.textContent = 'All cameras';
+      if (lbl) lbl.textContent = tr('All cameras');
       this._loadAllCamsBackground().then(() => this._renderAll());
     } else {
       if (engWrap) engWrap.style.display = '';
@@ -2069,10 +2289,10 @@ class FrigateModernHassCard extends HTMLElement {
   }
   _stopRotate() { if (this._rotateTimer) { clearInterval(this._rotateTimer); this._rotateTimer=null; } }
   _toggleRotate() {
-    if (this._rotateTimer) { this._stopRotate(); this._toast('Auto-rotate off',1800); }
+    if (this._rotateTimer) { this._stopRotate(); this._toast(tr('Auto-rotate off'),1800); }
     else {
       if (!this._config.rotate_seconds) this._config.rotate_seconds = DEFAULT_ROTATE_S;
-      this._startRotate(); this._toast(`Rotating every ${this._config.rotate_seconds}s`,1800);
+      this._startRotate(); this._toast(tr('Rotating every {n}s',{n:this._config.rotate_seconds}),1800);
     }
     this._renderCamSwitcher();
   }
@@ -2099,7 +2319,7 @@ class FrigateModernHassCard extends HTMLElement {
     const dot = this._config.cameras.length > 1 ? `<i class="cam-dot-lbl" style="background:${this._camColor(i)}"></i>` : '';
     const name = cap(camDisplayName(c));
     if (!ev) return `${dot}${name}`;
-    const what = cap(ev.label || ''), when = this._time(ev.start_time);
+    const what = lab(ev.label || ''), when = this._time(ev.start_time);
     return `${dot}<span class="gl-full">${name} · ${when} · ${what}</span><span class="gl-short">${when} · ${what}</span>`;
   }
   // An event label says what started playing and then gets out of the way:
@@ -2154,8 +2374,8 @@ class FrigateModernHassCard extends HTMLElement {
       const col = all && ci >= 0 ? this._camColor(ci) : labelColor(ev.label);
       const where = all && ci >= 0 ? ` · ${cap(camDisplayName(this._config.cameras[ci]))}` : '';
       const when = this._time(ev.start_time, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      return `<button class="chip" data-tick="${ev.id}"><i class="cam-dot-lbl" style="background:${col}"></i>${when} · ${cap(ev.label)}${where}</button>`;
-    }).join('') + `<button class="chip" data-grp-close>Close</button>`;
+      return `<button class="chip" data-tick="${ev.id}"><i class="cam-dot-lbl" style="background:${col}"></i>${when} · ${lab(ev.label)}${where}</button>`;
+    }).join('') + `<button class="chip" data-grp-close>${tr('Close')}</button>`;
     p.hidden = false;
   }
   _zoomTo(a, b) {
@@ -2270,7 +2490,9 @@ class FrigateModernHassCard extends HTMLElement {
 
   // ── shell ─────────────────────────────────────────────────
   _renderShell() {
-    const title = this._config.title || (this._config.cameras.length===1 ? cap(camDisplayName(this._config.cameras[0])) : 'Cameras') || 'Camera';
+    this._langCode = resolveLang(this._config.language, this._hass);
+    setLang(this._langCode);
+    const title = this._config.title || (this._config.cameras.length===1 ? cap(camDisplayName(this._config.cameras[0])) : tr('Cameras')) || tr('Camera');
     const sub = this._config.subtitle || 'Frigate';
     const multiCam = this._config.cameras.length > 1;
     const ht = new Set(this._config.hidden_tabs || []);
@@ -2286,10 +2508,10 @@ class FrigateModernHassCard extends HTMLElement {
             <!-- feed: single stream or grid -->
             <div class="feed-area">
               <div id="eng-wrap">
-                <div id="engine"><div class="ph">${ICONS.live}<span>Connecting…</span></div></div>
+                <div id="engine"><div class="ph">${ICONS.live}<span>${tr('Connecting…')}</span></div></div>
                 <div class="viewer" id="viewer" style="display:none"></div>
 <div class="feed-top" id="feed-top" style="display:none">
-                  <button class="btn back ctl-live" id="back">${ICONS.back}<span>Live</span></button>
+                  <button class="btn back ctl-live" id="back">${ICONS.back}<span>${tr('Live')}</span></button>
                 </div>
 <div class="grid-label" id="play-info" hidden></div>
               </div>
@@ -2299,19 +2521,19 @@ class FrigateModernHassCard extends HTMLElement {
             <div class="tl-sec">
               <div class="tl-head">
                 <div class="tl-where">
-                  <button class="tool" id="zoom-back" title="Back to where you were before zooming in" hidden>${ICONS.back}</button>
+                  <button class="tool" id="zoom-back" title="${tr('Back to where you were before zooming in')}" hidden>${ICONS.back}</button>
                   <span class="section-label" id="tl-range">—</span>
                 </div>
                 <div class="tl-tools">
                   <div class="stream-ctrl-bar" id="stream-ctrl-bar"></div>
-                  <button class="tool tool-txt" id="now-btn" title="Back to the last hours up to now">${ICONS.clock}<span>Now</span></button>
-                  <button class="tool" id="filter-btn" title="Filter">${ICONS.filter}</button>
-                  <button class="tool" id="cal-btn" title="Calendar">${ICONS.calendar}</button>
+                  <button class="tool tool-txt" id="now-btn" title="${tr('Back to the last hours up to now')}">${ICONS.clock}<span>${tr('Now')}</span></button>
+                  <button class="tool" id="filter-btn" title="${tr('Filter')}">${ICONS.filter}</button>
+                  <button class="tool" id="cal-btn" title="${tr('Calendar')}">${ICONS.calendar}</button>
                 </div>
               </div>
               <div class="filter-panel" id="filter-panel" style="display:none"></div>
               <div class="cal-panel" id="cal-panel" style="display:none"></div>
-              <div class="tl-track" id="tl-track" title="Drag · scroll=zoom · Shift+scroll=pan"><div class="tl-now"></div></div>
+              <div class="tl-track" id="tl-track" title="${tr('Drag · scroll=zoom · Shift+scroll=pan')}"><div class="tl-now"></div></div>
               <div class="grp-panel" id="grp-panel" hidden></div>
               <div class="tl-labels" id="tl-labels"></div>
               <div class="legend" id="legend"></div>
@@ -2320,8 +2542,8 @@ class FrigateModernHassCard extends HTMLElement {
             <div class="info-row">
               <div><div class="info-title" id="info-title">${title}</div><div class="info-sub">${sub}</div></div>
               <div class="stats">
-                <div class="stat"><div class="sv" id="ev-count">—</div><div class="sl">Events</div></div>
-                <div class="stat"><div class="sv" id="on-dot" style="color:#4ade80">●</div><div class="sl" id="on-lbl">Online</div></div>
+                <div class="stat"><div class="sv" id="ev-count">—</div><div class="sl">${tr('Events')}</div></div>
+                <div class="stat"><div class="sv" id="on-dot" style="color:#4ade80">●</div><div class="sl" id="on-lbl">${tr('Online')}</div></div>
               </div>
             </div>
             ${multiCam ? `<div class="cam-switcher" id="cam-switcher"></div>` : ''}
@@ -2329,20 +2551,20 @@ class FrigateModernHassCard extends HTMLElement {
           </div>
 
           <div class="col-right">
-            <button class="browse-toggle" id="browse-toggle"><span class="chev2" id="chev2">${ICONS.chevron}</span><span class="section-label">Events · Recordings</span></button>
+            <button class="browse-toggle" id="browse-toggle"><span class="chev2" id="chev2">${ICONS.chevron}</span><span class="section-label">${tr('Events · Recordings')}</span></button>
             <div class="browse" id="browse" style="display:none">
               <div class="tabs">
-                ${tab('live', ICONS.live, 'Live')}
-                ${tab('recordings', ICONS.recordings, 'Recordings')}
-                ${tab('clips', ICONS.clips, 'Clips')}
-                ${tab('snapshot', ICONS.snapshot, 'Snapshots')}
-                ${tab('reviews', ICONS.reviews, 'Reviews')}
-                ${tab('kept', ICONS.star, 'Kept events')}
+                ${tab('live', ICONS.live, tr('Live'))}
+                ${tab('recordings', ICONS.recordings, tr('Recordings'))}
+                ${tab('clips', ICONS.clips, tr('Clips'))}
+                ${tab('snapshot', ICONS.snapshot, tr('Snapshots'))}
+                ${tab('reviews', ICONS.reviews, tr('Reviews'))}
+                ${tab('kept', ICONS.star, tr('Kept events'))}
               </div>
               <div class="list-sec">
-                <div class="list-head"><span class="section-label" id="list-label">Recent events</span><span class="newtoast" id="newtoast" style="display:none">new ✦</span></div>
+                <div class="list-head"><span class="section-label" id="list-label">${tr('Recent events')}</span><span class="newtoast" id="newtoast" style="display:none">${tr('new ✦')}</span></div>
                 <div class="diag" id="diag" style="display:none"></div>
-                <div class="list" id="list"><div class="empty">Loading…</div></div>
+                <div class="list" id="list"><div class="empty">${tr('Loading…')}</div></div>
               </div>
             </div>
           </div>
@@ -2459,7 +2681,7 @@ class FrigateModernHassCard extends HTMLElement {
       return `<button class="cam-tab ${active?'active':''}" data-camidx="${i}"><span class="cam-dot" style="color:${ok?'#4ade80':'#ef4444'}">●</span> ${name}</button>`;
     }).join('');
     el.innerHTML = `<div class="cam-tabs">${tabs}</div>
-      <button class="cam-rotate ${this._rotateTimer?'on':''}" id="rotate-btn" title="Auto-rotate">${ICONS.rotate}</button>`;
+      <button class="cam-rotate ${this._rotateTimer?'on':''}" id="rotate-btn" title="${tr('Auto-rotate')}">${ICONS.rotate}</button>`;
   }
 
   // ── interactions ──────────────────────────────────────────
@@ -2528,7 +2750,7 @@ class FrigateModernHassCard extends HTMLElement {
     this._tab = tab;
     this.shadowRoot.querySelectorAll('[data-tab]').forEach(p=>p.classList.toggle('active',p.dataset.tab===tab));
     const lbl=this.shadowRoot.querySelector('#list-label');
-    if (lbl) lbl.textContent=({live:'Recent events',recordings:'Recordings',clips:'Clips',snapshot:'Snapshots',reviews:'Reviews',kept:'Kept'})[tab]||tab;
+    if (lbl) lbl.textContent=tr(({live:'Recent events',recordings:'Recordings',clips:'Clips',snapshot:'Snapshots',reviews:'Reviews',kept:'Kept'})[tab]||tab);
     if (tab==='live') this._showLive();
     if (tab==='reviews') this._loadReviews().then(()=>this._renderList());
     if (tab==='kept') this._loadKept().then(()=>this._renderList());
@@ -2588,15 +2810,15 @@ class FrigateModernHassCard extends HTMLElement {
       slot.innerHTML = `
         <img src="${url}" style="width:100%;height:100%;object-fit:contain;background:#000;display:block">
         ${label}
-        <button class="btn back grid-close-btn" data-restore-slot="${camIdx}" title="Back to live">${ICONS.back}<span>Live</span></button>
-        <button class="grid-fs-btn" data-slot-fs title="Fullscreen">${ICONS.expand}</button>`;
+        <button class="btn back grid-close-btn" data-restore-slot="${camIdx}" title="${tr('Back to live')}">${ICONS.back}<span>${tr('Live')}</span></button>
+        <button class="grid-fs-btn" data-slot-fs title="${tr('Fullscreen')}">${ICONS.expand}</button>`;
     } else {
       const url = await this._resolveClipUrl(ev.id);
       slot.innerHTML = `
         <video src="${url}" controls playsinline
           style="width:100%;height:100%;object-fit:contain;background:#000;display:block"></video>
         ${label}
-        <button class="btn back grid-close-btn" data-restore-slot="${camIdx}" title="Back to live">${ICONS.back}<span>Live</span></button>`;
+        <button class="btn back grid-close-btn" data-restore-slot="${camIdx}" title="${tr('Back to live')}">${ICONS.back}<span>${tr('Live')}</span></button>`;
       this._playMedia(slot.querySelector('video'));
     }
     this._fadeLabel(slot.querySelector('.grid-label'));
@@ -2703,7 +2925,7 @@ class FrigateModernHassCard extends HTMLElement {
     const token = ++this._playSeq;
     this._enter(); this._playing={id:ev.id};
     const viewer = this.shadowRoot.querySelector('#viewer');
-    viewer.innerHTML = '<div class="ld">Loading…</div>';
+    viewer.innerHTML = `<div class="ld">${tr('Loading…')}</div>`;
     const playUrl = await this._resolveClipUrl(ev.id);
     if (this._playSeq !== token) return;
     viewer.innerHTML=`<video src="${playUrl}" controls playsinline></video>`;
@@ -2724,7 +2946,7 @@ class FrigateModernHassCard extends HTMLElement {
     const fallback = () => {
       if (det) return this._showClipById(det);
       const viewer = this.shadowRoot.querySelector('#viewer');
-      if (viewer) viewer.innerHTML = '<div class="ld">No recording for this period</div>';
+      if (viewer) viewer.innerHTML = `<div class="ld">${tr('No recording for this period')}</div>`;
     };
     if (!(start > 0) || end <= start) return fallback();
     const shown = this._showRecording(start, end, null, { fallback });
@@ -2737,7 +2959,7 @@ class FrigateModernHassCard extends HTMLElement {
     const token = ++this._playSeq;
     this._enter(); this._playing={id};
     const viewer = this.shadowRoot.querySelector('#viewer');
-    viewer.innerHTML = '<div class="ld">Loading…</div>';
+    viewer.innerHTML = `<div class="ld">${tr('Loading…')}</div>`;
     const playUrl = await this._resolveClipUrl(id);
     if (this._playSeq !== token) return;
     viewer.innerHTML=`<video src="${playUrl}" controls playsinline></video>`;
@@ -2757,7 +2979,7 @@ class FrigateModernHassCard extends HTMLElement {
     const token = ++this._playSeq; // cancel any in-flight load
     this._enter(); this._playing={rec:s};
     const viewer = this.shadowRoot.querySelector('#viewer');
-    viewer.innerHTML='<div class="ld">Loading…</div>';
+    viewer.innerHTML=`<div class="ld">${tr('Loading…')}</div>`;
     const {clientId,cam}=this._cc();
     const maxChunk = 7200;
     const chunkEnd = Math.min(e, start + maxChunk);
@@ -2774,13 +2996,13 @@ class FrigateModernHassCard extends HTMLElement {
       <div class="rec-dl-bar">
         <div class="rec-ctl-row">
           <button class="rec-pp-btn">⏸</button>
-          <button class="rec-mute-btn" title="Mute">${ICONS.volOn}</button>
+          <button class="rec-mute-btn" title="${tr('Mute')}">${ICONS.volOn}</button>
           <span class="rec-ctl-time">0:00 / ${this._fmtDurS(clipDur)}</span>
           <input type="range" class="rec-prog" min="0" max="${clipDur}" value="0" step="1">
         </div>
         <div class="rec-dl-row">
-          <span>Download from <span class="rec-dl-time">${this._time(start)}</span></span>
-          <button class="rec-dl-btn">↓ Download</button>
+          <span>${tr('Download from')} <span class="rec-dl-time">${this._time(start)}</span></span>
+          <button class="rec-dl-btn">${tr('↓ Download')}</button>
         </div>
       </div>`;
     const vid     = viewer.querySelector('video');
@@ -2822,7 +3044,7 @@ class FrigateModernHassCard extends HTMLElement {
       this._playMedia(vid).then(() => {
         if (muteBtn) {
           muteBtn.innerHTML = vid.muted ? ICONS.volOff : ICONS.volOn;
-          muteBtn.title = vid.muted ? 'Unmute' : 'Mute';
+          muteBtn.title = vid.muted ? tr('Unmute') : tr('Mute');
         }
       });
     }
@@ -2830,7 +3052,7 @@ class FrigateModernHassCard extends HTMLElement {
     if (muteBtn && vid) muteBtn.addEventListener('click', () => {
       vid.muted = !vid.muted;
       muteBtn.innerHTML = vid.muted ? ICONS.volOff : ICONS.volOn;
-      muteBtn.title = vid.muted ? 'Unmute' : 'Mute';
+      muteBtn.title = vid.muted ? tr('Unmute') : tr('Mute');
     });
     if (prog && vid) {
       prog.addEventListener('mousedown', e => { e.stopPropagation(); prog._dragging = true; });
@@ -2876,7 +3098,7 @@ class FrigateModernHassCard extends HTMLElement {
         <video src="${url}" controls playsinline
           style="width:100%;height:100%;object-fit:contain;background:#000;display:block"></video>
         ${this._gridLabel(ci, { label: 'Recording', start_time: rs })}
-        <button class="btn back grid-close-btn" data-restore-slot="${ci}" title="Back to live">${ICONS.back}<span>Live</span></button>`;
+        <button class="btn back grid-close-btn" data-restore-slot="${ci}" title="${tr('Back to live')}">${ICONS.back}<span>${tr('Live')}</span></button>`;
     this._playMedia(slot.querySelector('video'));
     this._fadeLabel(slot.querySelector('.grid-label'));
   }
@@ -2975,7 +3197,7 @@ class FrigateModernHassCard extends HTMLElement {
         else if(!this._kept.find(e=>e.id===id)) this._kept=[{...ev},...this._kept];
         this._renderList();
         console.warn('[Frigate] retain failed',err);
-        this._toast('Could not save — check Frigate port config.');
+        this._toast(tr('Could not save — check Frigate port config.'));
       });
   }
   async _markAll() {
@@ -3034,12 +3256,12 @@ class FrigateModernHassCard extends HTMLElement {
   _renderFilter() {
     const p=this.shadowRoot.querySelector('#filter-panel'); if(!p) return;
     const lbls=['all',...this._labels()]; const zones=['all',...this._zones()];
-    const chip=(val,cur,attr)=>`<button class="chip ${val===cur?'on':''}" data-${attr}="${val}">${val==='all'?'All':cap(val)}</button>`;
-    p.innerHTML=`<div class="frow"><span class="frow-l">Label</span>${lbls.map(l=>chip(l,this._filterLabel,'flabel')).join('')}</div>
-      <div class="frow"><span class="frow-l">Zone</span>${zones.map(z=>chip(z,this._filterZone,'fzone')).join('')}</div>
-      <div class="frow"><span class="frow-l">Show</span>
-        <button class="chip ${!this._favOnly?'on':''}" data-favonly="0">All</button>
-        <button class="chip ${this._favOnly?'on':''}" data-favonly="1">★ Favorites</button></div>`;
+    const chip=(val,cur,attr)=>`<button class="chip ${val===cur?'on':''}" data-${attr}="${val}">${val==='all'?tr('All'):lab(val)}</button>`;
+    p.innerHTML=`<div class="frow"><span class="frow-l">${tr('Label')}</span>${lbls.map(l=>chip(l,this._filterLabel,'flabel')).join('')}</div>
+      <div class="frow"><span class="frow-l">${tr('Zone')}</span>${zones.map(z=>chip(z,this._filterZone,'fzone')).join('')}</div>
+      <div class="frow"><span class="frow-l">${tr('Show')}</span>
+        <button class="chip ${!this._favOnly?'on':''}" data-favonly="0">${tr('All')}</button>
+        <button class="chip ${this._favOnly?'on':''}" data-favonly="1">${tr('★ Favorites')}</button></div>`;
   }
 
   // ── scrub / scroll ────────────────────────────────────────
@@ -3127,9 +3349,9 @@ class FrigateModernHassCard extends HTMLElement {
     const dot=this._$('#on-dot'),lbl=this._$('#on-lbl'),title=this._$('#info-title');
     const ok=ent.state!=='unavailable';
     if(dot) dot.style.color=ok?'#4ade80':'#ef4444';
-    if(lbl) lbl.textContent=ok?'Online':'Offline';
+    if(lbl) lbl.textContent=ok?tr('Online'):tr('Offline');
     if(title) {
-      const c=this._activeCam; const n=this._config.title||(this._config.cameras.length>1?cap(camDisplayName(c)):'Camera');
+      const c=this._activeCam; const n=this._config.title||(this._config.cameras.length>1?cap(camDisplayName(c)):tr('Camera'));
       title.textContent=n;
     }
   }
@@ -3150,8 +3372,8 @@ class FrigateModernHassCard extends HTMLElement {
     if (back) back.hidden = !(this._zoomStack && this._zoomStack.length);
     const el=this._$('#tl-range'); if(!el) return;
     const span=this._winEnd-this._winStart; const fmt=t=>this._time(t);
-    if(span<=DAY+60) el.textContent=`${this._day(this._winEnd)} · ${fmt(this._winStart)}–${this._isNowWindow()?'now':fmt(this._winEnd)}`;
-    else el.textContent=`${this._day(this._winStart)} – ${this._isNowWindow()?'now':this._day(this._winEnd)}`;
+    if(span<=DAY+60) el.textContent=`${this._day(this._winEnd)} · ${fmt(this._winStart)}–${this._isNowWindow()?tr('now'):fmt(this._winEnd)}`;
+    else el.textContent=`${this._day(this._winStart)} – ${this._isNowWindow()?tr('now'):this._day(this._winEnd)}`;
   }
   _renderLegend() {
     const el=this._$('#legend'); if(!el) return;
@@ -3162,9 +3384,9 @@ class FrigateModernHassCard extends HTMLElement {
     if (this._eventsMode==='all') {
       html=this._config.cameras.map((c,i)=>`<span class="lg"><i style="background:${this._camColor(i)}"></i>${cap(camDisplayName(c))}</span>`).join('');
     } else {
-      html=labels.map(l=>`<span class="lg"><i style="background:${labelColor(l)}"></i>${cap(l)}</span>`).join('');
+      html=labels.map(l=>`<span class="lg"><i style="background:${labelColor(l)}"></i>${lab(l)}</span>`).join('');
     }
-    html+=`<span class="lg"><i style="background:${REC_NEUTRAL}"></i>Recording</span>`;
+    html+=`<span class="lg"><i style="background:${REC_NEUTRAL}"></i>${tr('Recording')}</span>`;
     el.innerHTML=html;
   }
 
@@ -3174,7 +3396,7 @@ class FrigateModernHassCard extends HTMLElement {
     const events=this._allDisplayEvents();
     if(!events.length||this._viewMode==='grid'){ row.style.display='none'; return; }
     row.style.display='block';
-    row.innerHTML=`<div class="latest-label"><span class="section-label">Latest event</span></div>
+    row.innerHTML=`<div class="latest-label"><span class="section-label">${tr('Latest event')}</span></div>
       <div class="latest-body">${this._eventCardHTML(events[0],false,true)}</div>`;
   }
 
@@ -3262,7 +3484,7 @@ class FrigateModernHassCard extends HTMLElement {
         const left = (ev.start_time - s) / span * 100;
         const col = ci >= 0 ? this._camColor(ci) : labelColor(ev.label);
         const where = all ? ` · ${cap(ci >= 0 ? camDisplayName(this._config.cameras[ci]) : (ev.camera || '').replace(/_/g, ' '))}` : '';
-        html += `<div class="t-ev" data-tick="${ev.id}"${hl} style="left:${left}%;background:${col}" title="${cap(ev.label)} ${this._time(ev.start_time)}${where}"></div>`;
+        html += `<div class="t-ev" data-tick="${ev.id}"${hl} style="left:${left}%;background:${col}" title="${lab(ev.label)} ${this._time(ev.start_time)}${where}"></div>`;
         continue;
       }
       const a = g.evs[0].start_time, b = g.evs[g.evs.length - 1].start_time;
@@ -3288,16 +3510,16 @@ class FrigateModernHassCard extends HTMLElement {
     const zone=ev.zones&&ev.zones.length?ev.zones[0]:''; const subl=ev.sub_label?`<span class="subl">${ev.sub_label}</span>`:'';
     const desc=expanded&&ev.data?.description?`<div class="desc">${ev.data.description}</div>`:'';
     const thumb=ev.has_snapshot||ev.has_clip?`<img src="${this._media(ev.id,'thumbnail.jpg')}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="tph" style="display:none">${ICONS.person}</div>`:`<div class="tph">${ICONS.person}</div>`;
-    const badge=ev.has_clip?'<span class="bc">clip</span>':(ev.has_snapshot?'<span class="bs">snap</span>':'');
-    const dlClip=ev.has_clip?`<button class="ico" data-dl="${ev.id}" data-dl-file="clip.mp4" title="Download clip">${ICONS.download}</button>`:'';
-    const dlSnap=ev.has_snapshot?`<button class="ico" data-dl="${ev.id}" data-dl-file="snapshot.jpg" title="Download snapshot">${ICONS.snapshot}</button>`:'';
+    const badge=ev.has_clip?`<span class="bc">${tr('clip')}</span>`:(ev.has_snapshot?`<span class="bs">${tr('snap')}</span>`:'');
+    const dlClip=ev.has_clip?`<button class="ico" data-dl="${ev.id}" data-dl-file="clip.mp4" title="${tr('Download clip')}">${ICONS.download}</button>`:'';
+    const dlSnap=ev.has_snapshot?`<button class="ico" data-dl="${ev.id}" data-dl-file="snapshot.jpg" title="${tr('Download snapshot')}">${ICONS.snapshot}</button>`:'';
     // show camera name in multi-cam all-events mode
     const camLabel=(this._eventsMode==='all'&&this._config.cameras.length>1)?`<span class="cam-badge">${(ev.camera||'').replace(/_/g,' ')}</span>`:'';
     // compact: wrap everything in a tighter layout, actions horizontal
     return `<div class="ec${compact?' compact':''}" data-ev="${ev.id}">
       <div class="et">${thumb}<div class="ed">${this._dur(ev)}s</div></div>
       <div class="ei">
-        <div class="etop"><span class="tb" style="background:${col}33;color:${col}">${cap(ev.label)}</span>${subl}${badge}${camLabel}${score?`<span class="esc">${score}</span>`:''}</div>
+        <div class="etop"><span class="tb" style="background:${col}33;color:${col}">${lab(ev.label)}</span>${subl}${badge}${camLabel}${score?`<span class="esc">${score}</span>`:''}</div>
         <div class="em"><span>${ICONS.clock}${this._time(ev.start_time)}</span>${zone?`<span>${ICONS.pin}${zone}</span>`:''}</div>
         ${desc}
       </div>
@@ -3315,12 +3537,12 @@ class FrigateModernHassCard extends HTMLElement {
     }
     if(this._tab==='reviews') return this._renderReviews(list);
     if(this._tab==='kept'){
-      if(!this._kept.length){list.innerHTML=`<div class="empty">No kept events<br><span style="opacity:.6">star an event to keep it</span></div>`;return;}
+      if(!this._kept.length){list.innerHTML=`<div class="empty">${tr('No kept events')}<br><span style="opacity:.6">${tr('star an event to keep it')}</span></div>`;return;}
       list.innerHTML=this._kept.map(ev=>this._eventCardHTML(ev,false)).join(''); return;
     }
     const events=this._filtered();
-    if(!events.length){list.innerHTML=`<div class="empty">No events in this window</div>`;return;}
-    list.innerHTML=events.map(ev=>this._eventCardHTML(ev,false)).join('')+(this._exhausted?'<div class="end">— end —</div>':'<div class="more">scroll for older…</div>');
+    if(!events.length){list.innerHTML=`<div class="empty">${tr('No events in this window')}</div>`;return;}
+    list.innerHTML=events.map(ev=>this._eventCardHTML(ev,false)).join('')+(this._exhausted?`<div class="end">${tr('— end —')}</div>`:`<div class="more">${tr('scroll for older…')}</div>`);
   }
   _renderRecordings(list) {
     // In grid view the list covers every camera, each row naming its camera.
@@ -3330,12 +3552,12 @@ class FrigateModernHassCard extends HTMLElement {
     if (all) this._config.cameras.forEach((c,ci)=>{ const cc=this._camCache[c.entity]; if(cc) for(const r of this._mergeRecs(cc.recordings||[])) recs.push({...r,ci}); });
     else recs=this._mergeRecs(this._recordings);
     recs.sort((a,b)=>b.start_time-a.start_time);
-    if(!recs.length){list.innerHTML='<div class="empty">No recordings in this window</div>';return;}
+    if(!recs.length){list.innerHTML=`<div class="empty">${tr('No recordings in this window')}</div>`;return;}
     list.innerHTML=recs.map(r=>{
       const rs=Math.floor(r.start_time), re=Math.floor(r.end_time||Date.now()/1000);
       const d=Math.max(1,re-rs); const mm=Math.floor(d/60),ss=d%60;
       const dur=`${mm?mm+'m ':''}${ss}s`;
-      const seekHint = d > 300 && !all ? ' <span class="seek-hint">· click to seek</span>' : '';
+      const seekHint = d > 300 && !all ? ` <span class="seek-hint">${tr('· click to seek')}</span>` : '';
       const cam = all ? `<i class="cam-dot-lbl" style="background:${this._camColor(r.ci)}"></i>${cap(camDisplayName(this._config.cameras[r.ci]))} · ` : '';
       return `<div class="rec" data-rs="${rs}" data-re="${re}"${all?` data-ci="${r.ci}"`:''}>
         <div class="ric">${ICONS.recordings}</div>
@@ -3348,17 +3570,17 @@ class FrigateModernHassCard extends HTMLElement {
     }).join('');
   }
   _renderReviews(list) {
-    if(!this._reviews.length){list.innerHTML='<div class="empty">No reviews in this window</div>';return;}
+    if(!this._reviews.length){list.innerHTML=`<div class="empty">${tr('No reviews in this window')}</div>`;return;}
     const allRevs=[...this._reviews].sort((a,b)=>b.start_time-a.start_time);
     const unrev=allRevs.filter(r=>!r.has_been_reviewed).length;
     const revs=this._showReviewed ? allRevs : allRevs.filter(r=>!r.has_been_reviewed);
-    const toggleLbl=this._showReviewed?'Hide reviewed':'Show reviewed';
-    const head=`<div class="rev-head"><span>${unrev} to review</span><div style="display:flex;gap:5px;align-items:center">${unrev?`<button class="chip on" data-mark-all>Mark all</button>`:''}<button class="chip" data-toggle-reviewed>${toggleLbl}</button></div></div>`;
-    if(!revs.length){list.innerHTML=head+'<div class="empty">Nothing to review ✓</div>';return;}
+    const toggleLbl=this._showReviewed?tr('Hide reviewed'):tr('Show reviewed');
+    const head=`<div class="rev-head"><span>${tr('{n} to review',{n:unrev})}</span><div style="display:flex;gap:5px;align-items:center">${unrev?`<button class="chip on" data-mark-all>${tr('Mark all')}</button>`:''}<button class="chip" data-toggle-reviewed>${toggleLbl}</button></div></div>`;
+    if(!revs.length){list.innerHTML=head+`<div class="empty">${tr('Nothing to review ✓')}</div>`;return;}
     list.innerHTML=head+revs.map(r=>{
       const sev=r.severity==='alert'?'alert':'detection';
-      const objs=(r.data?.objects||[]).map(cap).join(', ');
-      const title=r.data?.metadata?.title||objs||cap(r.severity);
+      const objs=(r.data?.objects||[]).map(lab).join(', ');
+      const title=r.data?.metadata?.title||objs||lab(r.severity);
       // Frigate does not return detections in time order, so [0] was usually an
       // object from halfway through the period. Event ids start with their epoch,
       // which parseFloat reads, so sorting on that gives the earliest.
@@ -3366,7 +3588,7 @@ class FrigateModernHassCard extends HTMLElement {
       const firstDet=dets[0]||'';
       const reviewed=r.has_been_reviewed;
       const thumb=firstDet?`<div class="rev-th"><img src="${this._media(firstDet,'thumbnail.jpg')}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`:'';
-      return`<div class="rev ${sev}" data-review-id="${r.id}" data-review-open="${firstDet}" data-rv-s="${r.start_time}" data-rv-e="${r.end_time||''}"><div class="rev-sev ${sev}"></div>${thumb}<div class="rev-inf"><div class="rev-t">${title}</div><div class="rev-m">${this._time(r.start_time)} · ${cap(sev)}${reviewed?' · ✓':' · tap'}</div></div>${reviewed?'':`<button class="ico" data-mark>${ICONS.reviews}</button>`}</div>`;
+      return`<div class="rev ${sev}" data-review-id="${r.id}" data-review-open="${firstDet}" data-rv-s="${r.start_time}" data-rv-e="${r.end_time||''}"><div class="rev-sev ${sev}"></div>${thumb}<div class="rev-inf"><div class="rev-t">${title}</div><div class="rev-m">${this._time(r.start_time)} · ${lab(sev)}${reviewed?' · ✓':' · '+tr('tap')}</div></div>${reviewed?'':`<button class="ico" data-mark>${ICONS.reviews}</button>`}</div>`;
     }).join('');
   }
 
@@ -3405,6 +3627,7 @@ class FrigateModernHassCardEditor extends HTMLElement {
   }
 
   _render() {
+    setLang(resolveLang(this._config?.language, this._hass));
     const frigEntities = this._frigateEntities();
     const allCamEntities = this._hass ? Object.keys(this._hass.states).filter(e=>e.startsWith('camera.')).sort() : [];
     const entityList = frigEntities.length ? frigEntities : allCamEntities;
@@ -3428,20 +3651,20 @@ class FrigateModernHassCardEditor extends HTMLElement {
     // no separate reorder control is needed.
     const camRows = cams.map((c,i) => `
       <div class="cr" data-row="${i}">
-        <span class="cnum" title="Tile ${i+1} in the grid">${i+1}</span>
+        <span class="cnum" title="${tr('Tile {n} in the grid',{n:i+1})}">${i+1}</span>
         <select name="cam-entity-${i}" class="ce" data-cam-entity="${i}">
-          <option value="">Select camera</option>
+          <option value="">${tr('Select camera')}</option>
           ${opts(c.entity||'')}
         </select>
-        <input type="text" name="cam-name-${i}" class="cn" data-cam-name="${i}" placeholder="Display name (optional)" value="${c.name||''}">
+        <input type="text" name="cam-name-${i}" class="cn" data-cam-name="${i}" placeholder="${tr('Display name (optional)')}" value="${c.name||''}">
         ${usingLayout ? '' : `
-        <select class="cs" data-cam-span="${i}" title="Tile size in the grid">
+        <select class="cs" data-cam-span="${i}" title="${tr('Tile size in the grid')}">
           ${[1,2,3].map(v => `<option value="${v}" ${Number(c.span?.cols ?? c.span ?? 1)===v?'selected':''}>${v}x${v}</option>`).join('')}
         </select>`}
         ${cams.length > 1 ? `
-        <input type="color" class="ccol" data-cam-color="${i}" value="${isHex(c.color) ? c.color : camSolid(i, cams.length)}" title="Colour of this camera on the grid view timeline">
-        ${isHex(c.color) ? `<button class="crst" data-reset-color="${i}" title="Back to the default colour">↺</button>` : ''}
-        <button class="xb" data-remove-cam="${i}" title="Remove">✕</button>` : ''}
+        <input type="color" class="ccol" data-cam-color="${i}" value="${isHex(c.color) ? c.color : camSolid(i, cams.length)}" title="${tr('Colour of this camera on the grid view timeline')}">
+        ${isHex(c.color) ? `<button class="crst" data-reset-color="${i}" title="${tr('Back to the default colour')}">↺</button>` : ''}
+        <button class="xb" data-remove-cam="${i}" title="${tr('Remove')}">✕</button>` : ''}
       </div>`).join('');
 
     const hiddenTabs = new Set(this._config?.hidden_tabs || []);
@@ -3501,67 +3724,67 @@ class FrigateModernHassCardEditor extends HTMLElement {
     </style>
     <div class="ed-wrap">
       <div>
-        <span class="field-label">Cameras ${frigEntities.length ? '<small class="hint" style="font-weight:400">· Frigate cameras detected</small>' : ''}</span>
+        <span class="field-label">${tr('Cameras')} ${frigEntities.length ? `<small class="hint" style="font-weight:400">${tr('· Frigate cameras detected')}</small>` : ''}</span>
         <div id="cam-list">${camRows}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-          <button class="add-btn" id="add-cam">+ Add camera</button>
-          <button class="add-btn" id="toggle-layout">Grid layout${usingLayout ? `: ${findLayout(layoutId)?.label || ''}` : ''}</button>
+          <button class="add-btn" id="add-cam">${tr('+ Add camera')}</button>
+          <button class="add-btn" id="toggle-layout">${tr('Grid layout')}${usingLayout ? `: ${tr(findLayout(layoutId)?.label || '')}` : ''}</button>
         </div>
-        ${cams.length > 1 ? '<small class="hint" style="display:block;margin-top:4px">The number is the tile the camera fills in the grid. Pick a camera that is already in another tile to swap the two.</small>' : ''}
-        ${cams.length > 4 ? '<small class="hint" style="display:block;margin-top:4px">Every camera in the grid streams at once, so more cameras means more load on the browser and on Frigate.</small>' : ''}
+        ${cams.length > 1 ? `<small class="hint" style="display:block;margin-top:4px">${tr('The number is the tile the camera fills in the grid. Pick a camera that is already in another tile to swap the two.')}</small>` : ''}
+        ${cams.length > 4 ? `<small class="hint" style="display:block;margin-top:4px">${tr('Every camera in the grid streams at once, so more cameras means more load on the browser and on Frigate.')}</small>` : ''}
         <div id="layout-picker" style="display:${this._layoutOpen ? 'block' : 'none'};margin-top:8px">
           <div class="lay-grid">${layoutChoices.map(l => this._layoutButton(l, layoutId)).join('')}</div>
-          <small class="hint">The numbers match the tile numbers beside each camera above. A layout sets the columns and the tile sizes together.</small>
+          <small class="hint">${tr('The numbers match the tile numbers beside each camera above. A layout sets the columns and the tile sizes together.')}</small>
           <div style="border-top:1px solid var(--divider-color);margin-top:10px;padding-top:8px">
-            <label class="chk-lbl"><input type="checkbox" name="stack_on_mobile" id="stack_on_mobile" ${this._config?.stack_on_mobile!==false?'checked':''}> On a phone, stack the cameras one per row</label>
-            <small class="hint" style="display:block;margin-top:4px">Any layout leaves the cameras too small to see on a phone, so this overrides it there. Turn it off to keep the grid on a phone too, for two cameras side by side or a small overview.</small>
+            <label class="chk-lbl"><input type="checkbox" name="stack_on_mobile" id="stack_on_mobile" ${this._config?.stack_on_mobile!==false?'checked':''}> ${tr('On a phone, stack the cameras one per row')}</label>
+            <small class="hint" style="display:block;margin-top:4px">${tr('Any layout leaves the cameras too small to see on a phone, so this overrides it there. Turn it off to keep the grid on a phone too, for two cameras side by side or a small overview.')}</small>
           </div>
         </div>
       </div>
 
-      <label><span class="field-label">Title (optional)</span>
-        <input name="title" class="tf" id="title" type="text" value="${this._config?.title||''}" placeholder="My Camera">
+      <label><span class="field-label">${tr('Title (optional)')}</span>
+        <input name="title" class="tf" id="title" type="text" value="${this._config?.title||''}" placeholder="${tr('My Camera')}">
       </label>
-      <label><span class="field-label">Subtitle</span>
+      <label><span class="field-label">${tr('Subtitle')}</span>
         <input name="subtitle" class="tf" id="subtitle" type="text" value="${this._config?.subtitle||''}" placeholder="Frigate">
       </label>
 
       <div class="section">
-        <span class="field-label">View</span>
+        <span class="field-label">${tr('View')}</span>
         <div class="radio-row">
-          <label class="radio-lbl"><input type="radio" name="default_view" value="single" ${defaultView==='single'?'checked':''}> Single camera</label>
-          <label class="radio-lbl"><input type="radio" name="default_view" value="grid" ${defaultView==='grid'?'checked':''}> Grid (all cams)</label>
+          <label class="radio-lbl"><input type="radio" name="default_view" value="single" ${defaultView==='single'?'checked':''}> ${tr('Single camera')}</label>
+          <label class="radio-lbl"><input type="radio" name="default_view" value="grid" ${defaultView==='grid'?'checked':''}> ${tr('Grid (all cams)')}</label>
         </div>
         <div style="margin-top:8px">
-          <span class="hint" style="display:block;margin-bottom:3px">Time format</span>
+          <span class="hint" style="display:block;margin-bottom:3px">${tr('Time format')}</span>
           <div class="radio-row">
-            ${[['auto','Follow Home Assistant'],['12h','12-hour'],['24h','24-hour']].map(([v,l]) => `
+            ${[['auto',tr('Follow Home Assistant')],['12h',tr('12-hour')],['24h',tr('24-hour')]].map(([v,l]) => `
             <label class="radio-lbl"><input type="radio" name="time_format" value="${v}" ${(this._config?.time_format||'auto')===v?'checked':''}> ${l}</label>`).join('')}
           </div>
         </div>
         <div style="margin-top:8px">
-          <label class="chk-lbl"><input type="checkbox" name="rotate_on_load" id="rotate_on_load" ${rotateOnLoad?'checked':''}> Auto-rotate on load</label>
+          <label class="chk-lbl"><input type="checkbox" name="rotate_on_load" id="rotate_on_load" ${rotateOnLoad?'checked':''}> ${tr('Auto-rotate on load')}</label>
         </div>
         <div style="margin-top:6px">
-          <label><span class="hint">Rotate interval (seconds, 0 = use default ${DEFAULT_ROTATE_S}s)</span>
+          <label><span class="hint">${tr('Rotate interval (seconds, 0 = use default {n}s)',{n:DEFAULT_ROTATE_S})}</span>
             <input name="rotate_seconds" class="tf" id="rotate_seconds" type="number" value="${this._config?.rotate_seconds??0}" min="0" style="margin-top:3px">
           </label>
         </div>
       </div>
       <div class="section">
-        <span class="field-label">Theme</span>
+        <span class="field-label">${tr('Theme')}</span>
         <div class="radio-row">
-          <label class="radio-lbl"><input type="radio" name="theme" value="dark"  ${(this._config?.theme||'dark')==='dark' ?'checked':''}> Dark</label>
-          <label class="radio-lbl"><input type="radio" name="theme" value="light" ${this._config?.theme==='light'?'checked':''}> Light</label>
-          <label class="radio-lbl"><input type="radio" name="theme" value="auto"  ${this._config?.theme==='auto' ?'checked':''}> Auto (browser)</label>
+          <label class="radio-lbl"><input type="radio" name="theme" value="dark"  ${(this._config?.theme||'dark')==='dark' ?'checked':''}> ${tr('Dark')}</label>
+          <label class="radio-lbl"><input type="radio" name="theme" value="light" ${this._config?.theme==='light'?'checked':''}> ${tr('Light')}</label>
+          <label class="radio-lbl"><input type="radio" name="theme" value="auto"  ${this._config?.theme==='auto' ?'checked':''}> ${tr('Auto (browser)')}</label>
         </div>
       </div>
       <div class="section">
-        <span class="field-label">Colors</span>
+        <span class="field-label">${tr('Colors')}</span>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
           <div>
             <label class="chk-lbl" style="margin-bottom:4px">
-              <input type="checkbox" id="use_accent" ${this._config?.accent_color?'checked':''}> Custom accent
+              <input type="checkbox" id="use_accent" ${this._config?.accent_color?'checked':''}> ${tr('Custom accent')}
             </label>
             <div style="display:flex;align-items:center;gap:6px">
               <input type="color" id="accent_color" value="${this._config?.accent_color||'#3b82f6'}" style="width:40px;height:30px;border:none;padding:2px;border-radius:6px;cursor:pointer">
@@ -3570,7 +3793,7 @@ class FrigateModernHassCardEditor extends HTMLElement {
           </div>
           <div>
             <label class="chk-lbl" style="margin-bottom:4px">
-              <input type="checkbox" id="use_bg" ${this._config?.bg_color?'checked':''}> Custom background
+              <input type="checkbox" id="use_bg" ${this._config?.bg_color?'checked':''}> ${tr('Custom background')}
             </label>
             <div style="display:flex;align-items:center;gap:6px">
               <input type="color" id="bg_color" value="${this._config?.bg_color||'#1c2233'}" style="width:40px;height:30px;border:none;padding:2px;border-radius:6px;cursor:pointer">
@@ -3578,67 +3801,75 @@ class FrigateModernHassCardEditor extends HTMLElement {
             </div>
           </div>
         </div>
-        <small class="hint">Check the box to activate. Uncheck to revert to theme default.</small>
+        <small class="hint">${tr('Check the box to activate. Uncheck to revert to theme default.')}</small>
       </div>
 
       <div class="section">
-        <span class="field-label">Hidden tabs</span>
+        <span class="field-label">${tr('Hidden tabs')}</span>
         <div class="chk-grid">
-          ${tabCheck('recordings','Recordings')}
-          ${tabCheck('clips','Clips')}
-          ${tabCheck('snapshot','Snapshots')}
-          ${tabCheck('reviews','Reviews')}
-          ${tabCheck('kept','Kept')}
+          ${tabCheck('recordings',tr('Recordings'))}
+          ${tabCheck('clips',tr('Clips'))}
+          ${tabCheck('snapshot',tr('Snapshots'))}
+          ${tabCheck('reviews',tr('Reviews'))}
+          ${tabCheck('kept',tr('Kept'))}
         </div>
       </div>
 
       <div class="section" ${usingLayout ? 'style="display:none"' : ''}>
-        <span class="field-label">Grid columns</span>
+        <span class="field-label">${tr('Grid columns')}</span>
         <div class="radio-row">
-          <label class="radio-lbl"><input type="radio" name="grid_columns" value="auto" ${(this._config?.grid_columns||'auto')==='auto'?'checked':''}> Automatic</label>
-          <label class="radio-lbl"><input type="radio" name="grid_columns" value="1" ${String(this._config?.grid_columns)==='1'?'checked':''}> 1 (stacked)</label>
+          <label class="radio-lbl"><input type="radio" name="grid_columns" value="auto" ${(this._config?.grid_columns||'auto')==='auto'?'checked':''}> ${tr('Automatic')}</label>
+          <label class="radio-lbl"><input type="radio" name="grid_columns" value="1" ${String(this._config?.grid_columns)==='1'?'checked':''}> ${tr('1 (stacked)')}</label>
           <label class="radio-lbl"><input type="radio" name="grid_columns" value="2" ${String(this._config?.grid_columns)==='2'?'checked':''}> 2</label>
           <label class="radio-lbl"><input type="radio" name="grid_columns" value="3" ${String(this._config?.grid_columns)==='3'?'checked':''}> 3</label>
           <label class="radio-lbl"><input type="radio" name="grid_columns" value="4" ${String(this._config?.grid_columns)==='4'?'checked':''}> 4</label>
         </div>
-        <small class="hint">A camera can occupy more than one tile, so one can be shown larger than the rest. Automatic picks a column count from the number of cameras and the space available: on a tablet that comes to <b>${this._colsAt(800, cams.length)}</b> per row. A phone stacks regardless, see below.</small>
+        <small class="hint">${tr('A camera can occupy more than one tile, so one can be shown larger than the rest. Automatic picks a column count from the number of cameras and the space available: on a tablet that comes to <b>{n}</b> per row. A phone stacks regardless, see below.',{n:this._colsAt(800, cams.length)})}</small>
       </div>
 
       <div class="section">
-        <span class="field-label">Events panel</span>
-        <label class="chk-lbl"><input type="checkbox" name="events_collapsed" id="events_collapsed" ${this._config?.events_collapsed===true?'checked':''}> Start with the events panel hidden</label>
-        <small class="hint" style="display:block;margin-top:4px">On a wide card the events list sits beside the cameras. Hiding it gives the cameras the full width; a button on the card slides it back in.</small>
+        <span class="field-label">${tr('Events panel')}</span>
+        <label class="chk-lbl"><input type="checkbox" name="events_collapsed" id="events_collapsed" ${this._config?.events_collapsed===true?'checked':''}> ${tr('Start with the events panel hidden')}</label>
+        <small class="hint" style="display:block;margin-top:4px">${tr('On a wide card the events list sits beside the cameras. Hiding it gives the cameras the full width; a button on the card slides it back in.')}</small>
       </div>
       </div>
 
       <div class="section">
-        <span class="field-label">Live view provider</span>
+        <span class="field-label">${tr('Live view provider')}</span>
         <div class="radio-row">
-          <label class="radio-lbl"><input type="radio" name="live_provider" value="hls" ${(this._config?.live_provider||'hls')==='hls'?'checked':''}> Home Assistant stream</label>
-          <label class="radio-lbl"><input type="radio" name="live_provider" value="go2rtc" ${this._config?.live_provider==='go2rtc'?'checked':''}> go2rtc, low latency (experimental)</label>
+          <label class="radio-lbl"><input type="radio" name="live_provider" value="hls" ${(this._config?.live_provider||'hls')==='hls'?'checked':''}> ${tr('Home Assistant stream')}</label>
+          <label class="radio-lbl"><input type="radio" name="live_provider" value="go2rtc" ${this._config?.live_provider==='go2rtc'?'checked':''}> ${tr('go2rtc, low latency (experimental)')}</label>
         </div>
-        <small class="hint">go2rtc streams via Frigate's built-in WebRTC/MSE for much lower latency. Falls back to the Home Assistant stream automatically if it can't connect.</small>
+        <small class="hint">${tr("go2rtc streams via Frigate's built-in WebRTC/MSE for much lower latency. Falls back to the Home Assistant stream automatically if it can't connect.")}</small>
         <div style="margin-top:8px">
-          <span class="field-label">go2rtc transport</span>
+          <span class="field-label">${tr('go2rtc transport')}</span>
           <div class="radio-row">
-            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="mse" ${(this._config?.go2rtc_mode||'mse')==='mse'?'checked':''}> MSE (recommended)</label>
-            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="webrtc" ${this._config?.go2rtc_mode==='webrtc'?'checked':''}> WebRTC only</label>
-            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="auto" ${this._config?.go2rtc_mode==='auto'?'checked':''}> Automatic</label>
+            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="mse" ${(this._config?.go2rtc_mode||'mse')==='mse'?'checked':''}> ${tr('MSE (recommended)')}</label>
+            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="webrtc" ${this._config?.go2rtc_mode==='webrtc'?'checked':''}> ${tr('WebRTC only')}</label>
+            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="auto" ${this._config?.go2rtc_mode==='auto'?'checked':''}> ${tr('Automatic')}</label>
           </div>
-          <small class="hint">MSE runs entirely over the proxied connection, so it works remotely and in the companion apps. WebRTC can be marginally faster but connects directly to go2rtc, which usually only resolves on the local network.</small>
+          <small class="hint">${tr('MSE runs entirely over the proxied connection, so it works remotely and in the companion apps. WebRTC can be marginally faster but connects directly to go2rtc, which usually only resolves on the local network.')}</small>
         </div>
       </div>
 
       <div class="section">
-        <span class="field-label">Maximum camera height</span>
+        <span class="field-label">${tr('Maximum camera height')}</span>
         <input name="stream_height" class="tf" id="stream_height" type="number"
           value="${this._config?.stream_height||''}" min="20" max="100"
-          placeholder="e.g. 70, blank = automatic">
-        <small class="hint">As a percentage of the screen height. Leave empty to let the cameras size themselves; a grid uses at most 70% by default. Raise it for a wall display.</small>
+          placeholder="${tr('e.g. 70, blank = automatic')}">
+        <small class="hint">${tr('As a percentage of the screen height. Leave empty to let the cameras size themselves; a grid uses at most 70% by default. Raise it for a wall display.')}</small>
       </div>
 
       <div class="section">
-        <span class="field-label">Window hours</span>
+        <span class="field-label">${tr('Language')}</span>
+        <div class="radio-row">
+          <label class="radio-lbl"><input type="radio" name="language" value="auto" ${(this._config?.language||'auto')==='auto'?'checked':''}> ${tr('Automatic (Home Assistant language)')}</label>
+          ${Object.entries(LANGS).map(([code, l]) => `<label class="radio-lbl"><input type="radio" name="language" value="${code}" ${this._config?.language===code?'checked':''}> ${l.name}</label>`).join('')}
+        </div>
+      </div>
+
+      <div class="section">
+        <span class="field-label">${tr('Window hours')}</span>
         <input name="window_hours" class="tf" id="window_hours" type="number" value="${this._config?.window_hours||6}" min="1" max="720">
       </div>
 
@@ -3701,7 +3932,7 @@ class FrigateModernHassCardEditor extends HTMLElement {
   // What the current settings produce at a given card width. The card does this
   // same sum; showing it beats making someone resize a phone to find out.
   _colsAt(width, camCount) {
-    if (this._config?.stack_on_mobile !== false && width < 500) return '1 camera';
+    if (this._config?.stack_on_mobile !== false && width < 500) return tr('1 camera');
     const own = Number(this._config?.min_tile_width) > 0 ? Number(this._config.min_tile_width) : 0;
     const min = own || (width < 500 ? 100 : 200); // same floors as the card
     const layout = findLayout(this._config?.grid_layout || 'auto');
@@ -3710,7 +3941,7 @@ class FrigateModernHassCardEditor extends HTMLElement {
       : (pinned > 0 ? pinned
       : (camCount <= 1 ? 1 : camCount <= 4 ? 2 : camCount <= 9 ? 3 : 4));
     cols = Math.max(1, Math.min(cols, Math.floor(width / min)));
-    return cols === 1 ? '1 camera' : `${cols} cameras`;
+    return cols === 1 ? tr('1 camera') : tr('{n} cameras', { n: cols });
   }
 
   // Draw a layout as numbered cells. Seeing the shape is the point; a written
@@ -3719,8 +3950,8 @@ class FrigateModernHassCardEditor extends HTMLElement {
     const sel = l.id === selected ? ' sel' : '';
     if (l.id === 'auto') {
       return `<button type="button" class="lay${sel}" data-layout="auto">
-        <div class="lay-auto">fits the<br>camera count</div>
-        <div class="lay-lbl">${l.label}</div></button>`;
+        <div class="lay-auto">${tr('fits the<br>camera count')}</div>
+        <div class="lay-lbl">${tr(l.label)}</div></button>`;
     }
     const cells = Array.from({ length: l.tiles }, (_, i) => {
       const sp = l.spans[i];
@@ -3729,7 +3960,7 @@ class FrigateModernHassCardEditor extends HTMLElement {
     }).join('');
     return `<button type="button" class="lay${sel}" data-layout="${l.id}">
       <div class="lay-prev" style="grid-template-columns:repeat(${l.cols},1fr)">${cells}</div>
-      <div class="lay-lbl">${l.label}</div></button>`;
+      <div class="lay-lbl">${tr(l.label)}</div></button>`;
   }
 
   _getCams() {
@@ -3784,6 +4015,8 @@ class FrigateModernHassCardEditor extends HTMLElement {
     c.stream_height = sh ? Number(sh) : null;
     c.events_collapsed = this.querySelector('#events_collapsed')?.checked === true;
     if (this._config?.grid_layout) c.grid_layout = this._config.grid_layout;
+    const lg = this.querySelector('input[name="language"]:checked')?.value || 'auto';
+    if (lg === 'auto') delete c.language; else c.language = lg;
     const gc = this.querySelector('input[name="grid_columns"]:checked')?.value || 'auto';
     c.grid_columns = gc === 'auto' ? 'auto' : Number(gc);
     c.stack_on_mobile = this.querySelector('#stack_on_mobile')?.checked !== false;

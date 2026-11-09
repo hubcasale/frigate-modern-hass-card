@@ -1,5 +1,6 @@
 // editor.js — FrigateModernHassCardEditor config panel
 import { DEFAULT_ROTATE_S, GRID_LAYOUTS, findLayout, camSolid, isHex } from './constants.js';
+import { tr, setLang, resolveLang, LANGS } from './i18n.js';
 
 export class FrigateModernHassCardEditor extends HTMLElement {
   setConfig(c) { this._config=c; this._render(); }
@@ -22,6 +23,7 @@ export class FrigateModernHassCardEditor extends HTMLElement {
   }
 
   _render() {
+    setLang(resolveLang(this._config?.language, this._hass));
     const frigEntities = this._frigateEntities();
     const allCamEntities = this._hass ? Object.keys(this._hass.states).filter(e=>e.startsWith('camera.')).sort() : [];
     const entityList = frigEntities.length ? frigEntities : allCamEntities;
@@ -45,20 +47,20 @@ export class FrigateModernHassCardEditor extends HTMLElement {
     // no separate reorder control is needed.
     const camRows = cams.map((c,i) => `
       <div class="cr" data-row="${i}">
-        <span class="cnum" title="Tile ${i+1} in the grid">${i+1}</span>
+        <span class="cnum" title="${tr('Tile {n} in the grid',{n:i+1})}">${i+1}</span>
         <select name="cam-entity-${i}" class="ce" data-cam-entity="${i}">
-          <option value="">Select camera</option>
+          <option value="">${tr('Select camera')}</option>
           ${opts(c.entity||'')}
         </select>
-        <input type="text" name="cam-name-${i}" class="cn" data-cam-name="${i}" placeholder="Display name (optional)" value="${c.name||''}">
+        <input type="text" name="cam-name-${i}" class="cn" data-cam-name="${i}" placeholder="${tr('Display name (optional)')}" value="${c.name||''}">
         ${usingLayout ? '' : `
-        <select class="cs" data-cam-span="${i}" title="Tile size in the grid">
+        <select class="cs" data-cam-span="${i}" title="${tr('Tile size in the grid')}">
           ${[1,2,3].map(v => `<option value="${v}" ${Number(c.span?.cols ?? c.span ?? 1)===v?'selected':''}>${v}x${v}</option>`).join('')}
         </select>`}
         ${cams.length > 1 ? `
-        <input type="color" class="ccol" data-cam-color="${i}" value="${isHex(c.color) ? c.color : camSolid(i, cams.length)}" title="Colour of this camera on the grid view timeline">
-        ${isHex(c.color) ? `<button class="crst" data-reset-color="${i}" title="Back to the default colour">↺</button>` : ''}
-        <button class="xb" data-remove-cam="${i}" title="Remove">✕</button>` : ''}
+        <input type="color" class="ccol" data-cam-color="${i}" value="${isHex(c.color) ? c.color : camSolid(i, cams.length)}" title="${tr('Colour of this camera on the grid view timeline')}">
+        ${isHex(c.color) ? `<button class="crst" data-reset-color="${i}" title="${tr('Back to the default colour')}">↺</button>` : ''}
+        <button class="xb" data-remove-cam="${i}" title="${tr('Remove')}">✕</button>` : ''}
       </div>`).join('');
 
     const hiddenTabs = new Set(this._config?.hidden_tabs || []);
@@ -118,67 +120,67 @@ export class FrigateModernHassCardEditor extends HTMLElement {
     </style>
     <div class="ed-wrap">
       <div>
-        <span class="field-label">Cameras ${frigEntities.length ? '<small class="hint" style="font-weight:400">· Frigate cameras detected</small>' : ''}</span>
+        <span class="field-label">${tr('Cameras')} ${frigEntities.length ? `<small class="hint" style="font-weight:400">${tr('· Frigate cameras detected')}</small>` : ''}</span>
         <div id="cam-list">${camRows}</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-          <button class="add-btn" id="add-cam">+ Add camera</button>
-          <button class="add-btn" id="toggle-layout">Grid layout${usingLayout ? `: ${findLayout(layoutId)?.label || ''}` : ''}</button>
+          <button class="add-btn" id="add-cam">${tr('+ Add camera')}</button>
+          <button class="add-btn" id="toggle-layout">${tr('Grid layout')}${usingLayout ? `: ${tr(findLayout(layoutId)?.label || '')}` : ''}</button>
         </div>
-        ${cams.length > 1 ? '<small class="hint" style="display:block;margin-top:4px">The number is the tile the camera fills in the grid. Pick a camera that is already in another tile to swap the two.</small>' : ''}
-        ${cams.length > 4 ? '<small class="hint" style="display:block;margin-top:4px">Every camera in the grid streams at once, so more cameras means more load on the browser and on Frigate.</small>' : ''}
+        ${cams.length > 1 ? `<small class="hint" style="display:block;margin-top:4px">${tr('The number is the tile the camera fills in the grid. Pick a camera that is already in another tile to swap the two.')}</small>` : ''}
+        ${cams.length > 4 ? `<small class="hint" style="display:block;margin-top:4px">${tr('Every camera in the grid streams at once, so more cameras means more load on the browser and on Frigate.')}</small>` : ''}
         <div id="layout-picker" style="display:${this._layoutOpen ? 'block' : 'none'};margin-top:8px">
           <div class="lay-grid">${layoutChoices.map(l => this._layoutButton(l, layoutId)).join('')}</div>
-          <small class="hint">The numbers match the tile numbers beside each camera above. A layout sets the columns and the tile sizes together.</small>
+          <small class="hint">${tr('The numbers match the tile numbers beside each camera above. A layout sets the columns and the tile sizes together.')}</small>
           <div style="border-top:1px solid var(--divider-color);margin-top:10px;padding-top:8px">
-            <label class="chk-lbl"><input type="checkbox" name="stack_on_mobile" id="stack_on_mobile" ${this._config?.stack_on_mobile!==false?'checked':''}> On a phone, stack the cameras one per row</label>
-            <small class="hint" style="display:block;margin-top:4px">Any layout leaves the cameras too small to see on a phone, so this overrides it there. Turn it off to keep the grid on a phone too, for two cameras side by side or a small overview.</small>
+            <label class="chk-lbl"><input type="checkbox" name="stack_on_mobile" id="stack_on_mobile" ${this._config?.stack_on_mobile!==false?'checked':''}> ${tr('On a phone, stack the cameras one per row')}</label>
+            <small class="hint" style="display:block;margin-top:4px">${tr('Any layout leaves the cameras too small to see on a phone, so this overrides it there. Turn it off to keep the grid on a phone too, for two cameras side by side or a small overview.')}</small>
           </div>
         </div>
       </div>
 
-      <label><span class="field-label">Title (optional)</span>
-        <input name="title" class="tf" id="title" type="text" value="${this._config?.title||''}" placeholder="My Camera">
+      <label><span class="field-label">${tr('Title (optional)')}</span>
+        <input name="title" class="tf" id="title" type="text" value="${this._config?.title||''}" placeholder="${tr('My Camera')}">
       </label>
-      <label><span class="field-label">Subtitle</span>
+      <label><span class="field-label">${tr('Subtitle')}</span>
         <input name="subtitle" class="tf" id="subtitle" type="text" value="${this._config?.subtitle||''}" placeholder="Frigate">
       </label>
 
       <div class="section">
-        <span class="field-label">View</span>
+        <span class="field-label">${tr('View')}</span>
         <div class="radio-row">
-          <label class="radio-lbl"><input type="radio" name="default_view" value="single" ${defaultView==='single'?'checked':''}> Single camera</label>
-          <label class="radio-lbl"><input type="radio" name="default_view" value="grid" ${defaultView==='grid'?'checked':''}> Grid (all cams)</label>
+          <label class="radio-lbl"><input type="radio" name="default_view" value="single" ${defaultView==='single'?'checked':''}> ${tr('Single camera')}</label>
+          <label class="radio-lbl"><input type="radio" name="default_view" value="grid" ${defaultView==='grid'?'checked':''}> ${tr('Grid (all cams)')}</label>
         </div>
         <div style="margin-top:8px">
-          <span class="hint" style="display:block;margin-bottom:3px">Time format</span>
+          <span class="hint" style="display:block;margin-bottom:3px">${tr('Time format')}</span>
           <div class="radio-row">
-            ${[['auto','Follow Home Assistant'],['12h','12-hour'],['24h','24-hour']].map(([v,l]) => `
+            ${[['auto',tr('Follow Home Assistant')],['12h',tr('12-hour')],['24h',tr('24-hour')]].map(([v,l]) => `
             <label class="radio-lbl"><input type="radio" name="time_format" value="${v}" ${(this._config?.time_format||'auto')===v?'checked':''}> ${l}</label>`).join('')}
           </div>
         </div>
         <div style="margin-top:8px">
-          <label class="chk-lbl"><input type="checkbox" name="rotate_on_load" id="rotate_on_load" ${rotateOnLoad?'checked':''}> Auto-rotate on load</label>
+          <label class="chk-lbl"><input type="checkbox" name="rotate_on_load" id="rotate_on_load" ${rotateOnLoad?'checked':''}> ${tr('Auto-rotate on load')}</label>
         </div>
         <div style="margin-top:6px">
-          <label><span class="hint">Rotate interval (seconds, 0 = use default ${DEFAULT_ROTATE_S}s)</span>
+          <label><span class="hint">${tr('Rotate interval (seconds, 0 = use default {n}s)',{n:DEFAULT_ROTATE_S})}</span>
             <input name="rotate_seconds" class="tf" id="rotate_seconds" type="number" value="${this._config?.rotate_seconds??0}" min="0" style="margin-top:3px">
           </label>
         </div>
       </div>
       <div class="section">
-        <span class="field-label">Theme</span>
+        <span class="field-label">${tr('Theme')}</span>
         <div class="radio-row">
-          <label class="radio-lbl"><input type="radio" name="theme" value="dark"  ${(this._config?.theme||'dark')==='dark' ?'checked':''}> Dark</label>
-          <label class="radio-lbl"><input type="radio" name="theme" value="light" ${this._config?.theme==='light'?'checked':''}> Light</label>
-          <label class="radio-lbl"><input type="radio" name="theme" value="auto"  ${this._config?.theme==='auto' ?'checked':''}> Auto (browser)</label>
+          <label class="radio-lbl"><input type="radio" name="theme" value="dark"  ${(this._config?.theme||'dark')==='dark' ?'checked':''}> ${tr('Dark')}</label>
+          <label class="radio-lbl"><input type="radio" name="theme" value="light" ${this._config?.theme==='light'?'checked':''}> ${tr('Light')}</label>
+          <label class="radio-lbl"><input type="radio" name="theme" value="auto"  ${this._config?.theme==='auto' ?'checked':''}> ${tr('Auto (browser)')}</label>
         </div>
       </div>
       <div class="section">
-        <span class="field-label">Colors</span>
+        <span class="field-label">${tr('Colors')}</span>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
           <div>
             <label class="chk-lbl" style="margin-bottom:4px">
-              <input type="checkbox" id="use_accent" ${this._config?.accent_color?'checked':''}> Custom accent
+              <input type="checkbox" id="use_accent" ${this._config?.accent_color?'checked':''}> ${tr('Custom accent')}
             </label>
             <div style="display:flex;align-items:center;gap:6px">
               <input type="color" id="accent_color" value="${this._config?.accent_color||'#3b82f6'}" style="width:40px;height:30px;border:none;padding:2px;border-radius:6px;cursor:pointer">
@@ -187,7 +189,7 @@ export class FrigateModernHassCardEditor extends HTMLElement {
           </div>
           <div>
             <label class="chk-lbl" style="margin-bottom:4px">
-              <input type="checkbox" id="use_bg" ${this._config?.bg_color?'checked':''}> Custom background
+              <input type="checkbox" id="use_bg" ${this._config?.bg_color?'checked':''}> ${tr('Custom background')}
             </label>
             <div style="display:flex;align-items:center;gap:6px">
               <input type="color" id="bg_color" value="${this._config?.bg_color||'#1c2233'}" style="width:40px;height:30px;border:none;padding:2px;border-radius:6px;cursor:pointer">
@@ -195,67 +197,75 @@ export class FrigateModernHassCardEditor extends HTMLElement {
             </div>
           </div>
         </div>
-        <small class="hint">Check the box to activate. Uncheck to revert to theme default.</small>
+        <small class="hint">${tr('Check the box to activate. Uncheck to revert to theme default.')}</small>
       </div>
 
       <div class="section">
-        <span class="field-label">Hidden tabs</span>
+        <span class="field-label">${tr('Hidden tabs')}</span>
         <div class="chk-grid">
-          ${tabCheck('recordings','Recordings')}
-          ${tabCheck('clips','Clips')}
-          ${tabCheck('snapshot','Snapshots')}
-          ${tabCheck('reviews','Reviews')}
-          ${tabCheck('kept','Kept')}
+          ${tabCheck('recordings',tr('Recordings'))}
+          ${tabCheck('clips',tr('Clips'))}
+          ${tabCheck('snapshot',tr('Snapshots'))}
+          ${tabCheck('reviews',tr('Reviews'))}
+          ${tabCheck('kept',tr('Kept'))}
         </div>
       </div>
 
       <div class="section" ${usingLayout ? 'style="display:none"' : ''}>
-        <span class="field-label">Grid columns</span>
+        <span class="field-label">${tr('Grid columns')}</span>
         <div class="radio-row">
-          <label class="radio-lbl"><input type="radio" name="grid_columns" value="auto" ${(this._config?.grid_columns||'auto')==='auto'?'checked':''}> Automatic</label>
-          <label class="radio-lbl"><input type="radio" name="grid_columns" value="1" ${String(this._config?.grid_columns)==='1'?'checked':''}> 1 (stacked)</label>
+          <label class="radio-lbl"><input type="radio" name="grid_columns" value="auto" ${(this._config?.grid_columns||'auto')==='auto'?'checked':''}> ${tr('Automatic')}</label>
+          <label class="radio-lbl"><input type="radio" name="grid_columns" value="1" ${String(this._config?.grid_columns)==='1'?'checked':''}> ${tr('1 (stacked)')}</label>
           <label class="radio-lbl"><input type="radio" name="grid_columns" value="2" ${String(this._config?.grid_columns)==='2'?'checked':''}> 2</label>
           <label class="radio-lbl"><input type="radio" name="grid_columns" value="3" ${String(this._config?.grid_columns)==='3'?'checked':''}> 3</label>
           <label class="radio-lbl"><input type="radio" name="grid_columns" value="4" ${String(this._config?.grid_columns)==='4'?'checked':''}> 4</label>
         </div>
-        <small class="hint">A camera can occupy more than one tile, so one can be shown larger than the rest. Automatic picks a column count from the number of cameras and the space available: on a tablet that comes to <b>${this._colsAt(800, cams.length)}</b> per row. A phone stacks regardless, see below.</small>
+        <small class="hint">${tr('A camera can occupy more than one tile, so one can be shown larger than the rest. Automatic picks a column count from the number of cameras and the space available: on a tablet that comes to <b>{n}</b> per row. A phone stacks regardless, see below.',{n:this._colsAt(800, cams.length)})}</small>
       </div>
 
       <div class="section">
-        <span class="field-label">Events panel</span>
-        <label class="chk-lbl"><input type="checkbox" name="events_collapsed" id="events_collapsed" ${this._config?.events_collapsed===true?'checked':''}> Start with the events panel hidden</label>
-        <small class="hint" style="display:block;margin-top:4px">On a wide card the events list sits beside the cameras. Hiding it gives the cameras the full width; a button on the card slides it back in.</small>
+        <span class="field-label">${tr('Events panel')}</span>
+        <label class="chk-lbl"><input type="checkbox" name="events_collapsed" id="events_collapsed" ${this._config?.events_collapsed===true?'checked':''}> ${tr('Start with the events panel hidden')}</label>
+        <small class="hint" style="display:block;margin-top:4px">${tr('On a wide card the events list sits beside the cameras. Hiding it gives the cameras the full width; a button on the card slides it back in.')}</small>
       </div>
       </div>
 
       <div class="section">
-        <span class="field-label">Live view provider</span>
+        <span class="field-label">${tr('Live view provider')}</span>
         <div class="radio-row">
-          <label class="radio-lbl"><input type="radio" name="live_provider" value="hls" ${(this._config?.live_provider||'hls')==='hls'?'checked':''}> Home Assistant stream</label>
-          <label class="radio-lbl"><input type="radio" name="live_provider" value="go2rtc" ${this._config?.live_provider==='go2rtc'?'checked':''}> go2rtc, low latency (experimental)</label>
+          <label class="radio-lbl"><input type="radio" name="live_provider" value="hls" ${(this._config?.live_provider||'hls')==='hls'?'checked':''}> ${tr('Home Assistant stream')}</label>
+          <label class="radio-lbl"><input type="radio" name="live_provider" value="go2rtc" ${this._config?.live_provider==='go2rtc'?'checked':''}> ${tr('go2rtc, low latency (experimental)')}</label>
         </div>
-        <small class="hint">go2rtc streams via Frigate's built-in WebRTC/MSE for much lower latency. Falls back to the Home Assistant stream automatically if it can't connect.</small>
+        <small class="hint">${tr("go2rtc streams via Frigate's built-in WebRTC/MSE for much lower latency. Falls back to the Home Assistant stream automatically if it can't connect.")}</small>
         <div style="margin-top:8px">
-          <span class="field-label">go2rtc transport</span>
+          <span class="field-label">${tr('go2rtc transport')}</span>
           <div class="radio-row">
-            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="mse" ${(this._config?.go2rtc_mode||'mse')==='mse'?'checked':''}> MSE (recommended)</label>
-            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="webrtc" ${this._config?.go2rtc_mode==='webrtc'?'checked':''}> WebRTC only</label>
-            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="auto" ${this._config?.go2rtc_mode==='auto'?'checked':''}> Automatic</label>
+            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="mse" ${(this._config?.go2rtc_mode||'mse')==='mse'?'checked':''}> ${tr('MSE (recommended)')}</label>
+            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="webrtc" ${this._config?.go2rtc_mode==='webrtc'?'checked':''}> ${tr('WebRTC only')}</label>
+            <label class="radio-lbl"><input type="radio" name="go2rtc_mode" value="auto" ${this._config?.go2rtc_mode==='auto'?'checked':''}> ${tr('Automatic')}</label>
           </div>
-          <small class="hint">MSE runs entirely over the proxied connection, so it works remotely and in the companion apps. WebRTC can be marginally faster but connects directly to go2rtc, which usually only resolves on the local network.</small>
+          <small class="hint">${tr('MSE runs entirely over the proxied connection, so it works remotely and in the companion apps. WebRTC can be marginally faster but connects directly to go2rtc, which usually only resolves on the local network.')}</small>
         </div>
       </div>
 
       <div class="section">
-        <span class="field-label">Maximum camera height</span>
+        <span class="field-label">${tr('Maximum camera height')}</span>
         <input name="stream_height" class="tf" id="stream_height" type="number"
           value="${this._config?.stream_height||''}" min="20" max="100"
-          placeholder="e.g. 70, blank = automatic">
-        <small class="hint">As a percentage of the screen height. Leave empty to let the cameras size themselves; a grid uses at most 70% by default. Raise it for a wall display.</small>
+          placeholder="${tr('e.g. 70, blank = automatic')}">
+        <small class="hint">${tr('As a percentage of the screen height. Leave empty to let the cameras size themselves; a grid uses at most 70% by default. Raise it for a wall display.')}</small>
       </div>
 
       <div class="section">
-        <span class="field-label">Window hours</span>
+        <span class="field-label">${tr('Language')}</span>
+        <div class="radio-row">
+          <label class="radio-lbl"><input type="radio" name="language" value="auto" ${(this._config?.language||'auto')==='auto'?'checked':''}> ${tr('Automatic (Home Assistant language)')}</label>
+          ${Object.entries(LANGS).map(([code, l]) => `<label class="radio-lbl"><input type="radio" name="language" value="${code}" ${this._config?.language===code?'checked':''}> ${l.name}</label>`).join('')}
+        </div>
+      </div>
+
+      <div class="section">
+        <span class="field-label">${tr('Window hours')}</span>
         <input name="window_hours" class="tf" id="window_hours" type="number" value="${this._config?.window_hours||6}" min="1" max="720">
       </div>
 
@@ -319,7 +329,7 @@ export class FrigateModernHassCardEditor extends HTMLElement {
   // What the current settings produce at a given card width. The card does this
   // same sum; showing it beats making someone resize a phone to find out.
   _colsAt(width, camCount) {
-    if (this._config?.stack_on_mobile !== false && width < 500) return '1 camera';
+    if (this._config?.stack_on_mobile !== false && width < 500) return tr('1 camera');
     const own = Number(this._config?.min_tile_width) > 0 ? Number(this._config.min_tile_width) : 0;
     const min = own || (width < 500 ? 100 : 200); // same floors as the card
     const layout = findLayout(this._config?.grid_layout || 'auto');
@@ -328,7 +338,7 @@ export class FrigateModernHassCardEditor extends HTMLElement {
       : (pinned > 0 ? pinned
       : (camCount <= 1 ? 1 : camCount <= 4 ? 2 : camCount <= 9 ? 3 : 4));
     cols = Math.max(1, Math.min(cols, Math.floor(width / min)));
-    return cols === 1 ? '1 camera' : `${cols} cameras`;
+    return cols === 1 ? tr('1 camera') : tr('{n} cameras', { n: cols });
   }
 
   // Draw a layout as numbered cells. Seeing the shape is the point; a written
@@ -337,8 +347,8 @@ export class FrigateModernHassCardEditor extends HTMLElement {
     const sel = l.id === selected ? ' sel' : '';
     if (l.id === 'auto') {
       return `<button type="button" class="lay${sel}" data-layout="auto">
-        <div class="lay-auto">fits the<br>camera count</div>
-        <div class="lay-lbl">${l.label}</div></button>`;
+        <div class="lay-auto">${tr('fits the<br>camera count')}</div>
+        <div class="lay-lbl">${tr(l.label)}</div></button>`;
     }
     const cells = Array.from({ length: l.tiles }, (_, i) => {
       const sp = l.spans[i];
@@ -347,7 +357,7 @@ export class FrigateModernHassCardEditor extends HTMLElement {
     }).join('');
     return `<button type="button" class="lay${sel}" data-layout="${l.id}">
       <div class="lay-prev" style="grid-template-columns:repeat(${l.cols},1fr)">${cells}</div>
-      <div class="lay-lbl">${l.label}</div></button>`;
+      <div class="lay-lbl">${tr(l.label)}</div></button>`;
   }
 
   _getCams() {
@@ -402,6 +412,8 @@ export class FrigateModernHassCardEditor extends HTMLElement {
     c.stream_height = sh ? Number(sh) : null;
     c.events_collapsed = this.querySelector('#events_collapsed')?.checked === true;
     if (this._config?.grid_layout) c.grid_layout = this._config.grid_layout;
+    const lg = this.querySelector('input[name="language"]:checked')?.value || 'auto';
+    if (lg === 'auto') delete c.language; else c.language = lg;
     const gc = this.querySelector('input[name="grid_columns"]:checked')?.value || 'auto';
     c.grid_columns = gc === 'auto' ? 'auto' : Number(gc);
     c.stack_on_mobile = this.querySelector('#stack_on_mobile')?.checked !== false;

@@ -78,6 +78,7 @@ default_view: single     # or 'grid'
 | `default_view` | string | `single` | `single` or `grid` |
 | `theme` | string | `dark` | `dark`, `light`, `auto` |
 | `time_format` | string | `auto` | `auto` follows the 12/24 hour setting in your Home Assistant profile; `12h` or `24h` to override |
+| `language` | string | `auto` | `auto` follows your Home Assistant language; `en` or `it` to force one (see [Languages](#languages)) |
 | `accent_color` | string | none | Custom accent colour (hex) |
 | `bg_color` | string | none | Custom background colour (hex) |
 | `window_hours` | number | `6` | Hours the timeline shows when the card opens. Zoom and drag to see more |
@@ -146,6 +147,14 @@ cameras:
   - entity: camera.garden
   - entity: camera.shed
 ```
+
+### Languages
+
+The card's own text follows your Home Assistant language. English and Italian are included; any other language falls back to English. Dates and times were already localised.
+
+To add a language, copy the `IT` block in `src/i18n.js`, translate the values (keep `{n}` placeholders), add it to `LANGS`, then run `python build.py`.
+
+Note: the language is shared by every card on the page, so two cards set to different languages will not both be honoured.
 
 ### Events panel
 

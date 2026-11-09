@@ -2,6 +2,7 @@
 import { VERSION, CARD_TAG, DAY, DEFAULT_ROTATE_S, ICONS, cap, parseWs,
          labelColor, camSolid, isHex, REC_NEUTRAL, REC_GROUP, MIN_TILE_PX, PHONE_PX, PHONE_MIN_TILE_PX, normSpan, findLayout, mkCamState, camDisplayName } from './constants.js';
 import { STYLES } from './styles.js';
+import { tr, lab, setLang, resolveLang, LANGS } from './i18n.js';
 
 export class FrigateModernHassCard extends HTMLElement {
   constructor() {
@@ -58,6 +59,8 @@ export class FrigateModernHassCard extends HTMLElement {
       hidden_tabs: Array.isArray(config.hidden_tabs) ? config.hidden_tabs : [],
       stream_height: config.stream_height ? Number(config.stream_height) : null,
       theme: ['light','dark','auto'].includes(config.theme) ? config.theme : 'dark',
+      // 'auto' follows Home Assistant's language; otherwise a code from LANGS.
+      language: (config.language && LANGS[config.language]) ? config.language : 'auto',
       accent_color: config.accent_color || null,
       bg_color: config.bg_color || null,
       // Live view source. 'go2rtc' streams via Frigate's built-in go2rtc
@@ -102,7 +105,7 @@ export class FrigateModernHassCard extends HTMLElement {
   set hass(hass) {
     this._hass = hass;
     if (!this._config) return;
-    if (!this._started) { this._started = true; this._start(); return; }
+    if (!this._started) { this._started = true; this._applyLang(); this._start(); return; }
     // keep active stream in sync
     if (this._engine) {
       try { this._engine.hass = hass; } catch(_) {}
@@ -119,6 +122,15 @@ export class FrigateModernHassCard extends HTMLElement {
     }
     this._syncStatus();
     if (this._config.theme === 'auto') this._applyCardStyle(); // re-evaluate HA dark mode
+  }
+
+  // The shell is first drawn from setConfig, before Home Assistant has handed
+  // over its language. Draw it again once it is known, but only before the card
+  // has started; after that the language stays put until the next setConfig.
+  _applyLang() {
+    const code = resolveLang(this._config.language, this._hass);
+    if (code === this._langCode) return;
+    this._renderShell();
   }
 
   get _activeCam() { return this._config?.cameras[this._activeCamIdx] || this._config?.cameras[0]; }
@@ -822,9 +834,9 @@ export class FrigateModernHassCard extends HTMLElement {
     // The word is what the button does, never where you are. Highlighting it as
     // well made it read as the mode you were already in, which is backwards.
     const grid = this._config.cameras.length > 1
-      ? `<button class="tool tool-txt" id="sc-grid" title="${inGrid ? 'Show one camera' : 'Show all cameras'}">${inGrid ? ICONS.live : ICONS.grid}<span>${inGrid ? 'Single' : 'Grid'}</span></button>`
+      ? `<button class="tool tool-txt" id="sc-grid" title="${inGrid ? tr('Show one camera') : tr('Show all cameras')}">${inGrid ? ICONS.live : ICONS.grid}<span>${inGrid ? tr('Single') : tr('Grid')}</span></button>`
       : '';
-    const fs = inGrid ? `<button class="tool" id="sc-fs" title="Fullscreen">${ICONS.expand}</button>` : '';
+    const fs = inGrid ? `<button class="tool" id="sc-fs" title="${tr('Fullscreen')}">${ICONS.expand}</button>` : '';
     // Only meaningful in the wide layout, where the events panel sits beside the
     // cameras. CSS hides it when narrow, since there the browse toggle does this.
     const events = `<button class="tool" id="sc-events"></button>`;
@@ -837,7 +849,7 @@ export class FrigateModernHassCard extends HTMLElement {
     const btn = this.shadowRoot.querySelector('#sc-events');
     if (btn) {
       btn.innerHTML = this._eventsCollapsed ? ICONS.panelOff : ICONS.panelOn;
-      btn.title = this._eventsCollapsed ? 'Show events panel' : 'Hide events panel';
+      btn.title = this._eventsCollapsed ? tr('Show events panel') : tr('Hide events panel');
     }
   }
   _toggleEvents() {
@@ -864,7 +876,7 @@ export class FrigateModernHassCard extends HTMLElement {
       if (gridEl) { gridEl.style.display = ''; this._mountGrid(); }
       this._eventsMode = 'all';
       const lbl = this.shadowRoot.querySelector('#list-label');
-      if (lbl) lbl.textContent = 'All cameras';
+      if (lbl) lbl.textContent = tr('All cameras');
       this._loadAllCamsBackground().then(() => this._renderAll());
     } else {
       if (engWrap) engWrap.style.display = '';
@@ -918,10 +930,10 @@ export class FrigateModernHassCard extends HTMLElement {
   }
   _stopRotate() { if (this._rotateTimer) { clearInterval(this._rotateTimer); this._rotateTimer=null; } }
   _toggleRotate() {
-    if (this._rotateTimer) { this._stopRotate(); this._toast('Auto-rotate off',1800); }
+    if (this._rotateTimer) { this._stopRotate(); this._toast(tr('Auto-rotate off'),1800); }
     else {
       if (!this._config.rotate_seconds) this._config.rotate_seconds = DEFAULT_ROTATE_S;
-      this._startRotate(); this._toast(`Rotating every ${this._config.rotate_seconds}s`,1800);
+      this._startRotate(); this._toast(tr('Rotating every {n}s',{n:this._config.rotate_seconds}),1800);
     }
     this._renderCamSwitcher();
   }
@@ -948,7 +960,7 @@ export class FrigateModernHassCard extends HTMLElement {
     const dot = this._config.cameras.length > 1 ? `<i class="cam-dot-lbl" style="background:${this._camColor(i)}"></i>` : '';
     const name = cap(camDisplayName(c));
     if (!ev) return `${dot}${name}`;
-    const what = cap(ev.label || ''), when = this._time(ev.start_time);
+    const what = lab(ev.label || ''), when = this._time(ev.start_time);
     return `${dot}<span class="gl-full">${name} · ${when} · ${what}</span><span class="gl-short">${when} · ${what}</span>`;
   }
   // An event label says what started playing and then gets out of the way:
@@ -1003,8 +1015,8 @@ export class FrigateModernHassCard extends HTMLElement {
       const col = all && ci >= 0 ? this._camColor(ci) : labelColor(ev.label);
       const where = all && ci >= 0 ? ` · ${cap(camDisplayName(this._config.cameras[ci]))}` : '';
       const when = this._time(ev.start_time, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      return `<button class="chip" data-tick="${ev.id}"><i class="cam-dot-lbl" style="background:${col}"></i>${when} · ${cap(ev.label)}${where}</button>`;
-    }).join('') + `<button class="chip" data-grp-close>Close</button>`;
+      return `<button class="chip" data-tick="${ev.id}"><i class="cam-dot-lbl" style="background:${col}"></i>${when} · ${lab(ev.label)}${where}</button>`;
+    }).join('') + `<button class="chip" data-grp-close>${tr('Close')}</button>`;
     p.hidden = false;
   }
   _zoomTo(a, b) {
@@ -1119,7 +1131,9 @@ export class FrigateModernHassCard extends HTMLElement {
 
   // ── shell ─────────────────────────────────────────────────
   _renderShell() {
-    const title = this._config.title || (this._config.cameras.length===1 ? cap(camDisplayName(this._config.cameras[0])) : 'Cameras') || 'Camera';
+    this._langCode = resolveLang(this._config.language, this._hass);
+    setLang(this._langCode);
+    const title = this._config.title || (this._config.cameras.length===1 ? cap(camDisplayName(this._config.cameras[0])) : tr('Cameras')) || tr('Camera');
     const sub = this._config.subtitle || 'Frigate';
     const multiCam = this._config.cameras.length > 1;
     const ht = new Set(this._config.hidden_tabs || []);
@@ -1135,10 +1149,10 @@ export class FrigateModernHassCard extends HTMLElement {
             <!-- feed: single stream or grid -->
             <div class="feed-area">
               <div id="eng-wrap">
-                <div id="engine"><div class="ph">${ICONS.live}<span>Connecting…</span></div></div>
+                <div id="engine"><div class="ph">${ICONS.live}<span>${tr('Connecting…')}</span></div></div>
                 <div class="viewer" id="viewer" style="display:none"></div>
 <div class="feed-top" id="feed-top" style="display:none">
-                  <button class="btn back ctl-live" id="back">${ICONS.back}<span>Live</span></button>
+                  <button class="btn back ctl-live" id="back">${ICONS.back}<span>${tr('Live')}</span></button>
                 </div>
 <div class="grid-label" id="play-info" hidden></div>
               </div>
@@ -1148,19 +1162,19 @@ export class FrigateModernHassCard extends HTMLElement {
             <div class="tl-sec">
               <div class="tl-head">
                 <div class="tl-where">
-                  <button class="tool" id="zoom-back" title="Back to where you were before zooming in" hidden>${ICONS.back}</button>
+                  <button class="tool" id="zoom-back" title="${tr('Back to where you were before zooming in')}" hidden>${ICONS.back}</button>
                   <span class="section-label" id="tl-range">—</span>
                 </div>
                 <div class="tl-tools">
                   <div class="stream-ctrl-bar" id="stream-ctrl-bar"></div>
-                  <button class="tool tool-txt" id="now-btn" title="Back to the last hours up to now">${ICONS.clock}<span>Now</span></button>
-                  <button class="tool" id="filter-btn" title="Filter">${ICONS.filter}</button>
-                  <button class="tool" id="cal-btn" title="Calendar">${ICONS.calendar}</button>
+                  <button class="tool tool-txt" id="now-btn" title="${tr('Back to the last hours up to now')}">${ICONS.clock}<span>${tr('Now')}</span></button>
+                  <button class="tool" id="filter-btn" title="${tr('Filter')}">${ICONS.filter}</button>
+                  <button class="tool" id="cal-btn" title="${tr('Calendar')}">${ICONS.calendar}</button>
                 </div>
               </div>
               <div class="filter-panel" id="filter-panel" style="display:none"></div>
               <div class="cal-panel" id="cal-panel" style="display:none"></div>
-              <div class="tl-track" id="tl-track" title="Drag · scroll=zoom · Shift+scroll=pan"><div class="tl-now"></div></div>
+              <div class="tl-track" id="tl-track" title="${tr('Drag · scroll=zoom · Shift+scroll=pan')}"><div class="tl-now"></div></div>
               <div class="grp-panel" id="grp-panel" hidden></div>
               <div class="tl-labels" id="tl-labels"></div>
               <div class="legend" id="legend"></div>
@@ -1169,8 +1183,8 @@ export class FrigateModernHassCard extends HTMLElement {
             <div class="info-row">
               <div><div class="info-title" id="info-title">${title}</div><div class="info-sub">${sub}</div></div>
               <div class="stats">
-                <div class="stat"><div class="sv" id="ev-count">—</div><div class="sl">Events</div></div>
-                <div class="stat"><div class="sv" id="on-dot" style="color:#4ade80">●</div><div class="sl" id="on-lbl">Online</div></div>
+                <div class="stat"><div class="sv" id="ev-count">—</div><div class="sl">${tr('Events')}</div></div>
+                <div class="stat"><div class="sv" id="on-dot" style="color:#4ade80">●</div><div class="sl" id="on-lbl">${tr('Online')}</div></div>
               </div>
             </div>
             ${multiCam ? `<div class="cam-switcher" id="cam-switcher"></div>` : ''}
@@ -1178,20 +1192,20 @@ export class FrigateModernHassCard extends HTMLElement {
           </div>
 
           <div class="col-right">
-            <button class="browse-toggle" id="browse-toggle"><span class="chev2" id="chev2">${ICONS.chevron}</span><span class="section-label">Events · Recordings</span></button>
+            <button class="browse-toggle" id="browse-toggle"><span class="chev2" id="chev2">${ICONS.chevron}</span><span class="section-label">${tr('Events · Recordings')}</span></button>
             <div class="browse" id="browse" style="display:none">
               <div class="tabs">
-                ${tab('live', ICONS.live, 'Live')}
-                ${tab('recordings', ICONS.recordings, 'Recordings')}
-                ${tab('clips', ICONS.clips, 'Clips')}
-                ${tab('snapshot', ICONS.snapshot, 'Snapshots')}
-                ${tab('reviews', ICONS.reviews, 'Reviews')}
-                ${tab('kept', ICONS.star, 'Kept events')}
+                ${tab('live', ICONS.live, tr('Live'))}
+                ${tab('recordings', ICONS.recordings, tr('Recordings'))}
+                ${tab('clips', ICONS.clips, tr('Clips'))}
+                ${tab('snapshot', ICONS.snapshot, tr('Snapshots'))}
+                ${tab('reviews', ICONS.reviews, tr('Reviews'))}
+                ${tab('kept', ICONS.star, tr('Kept events'))}
               </div>
               <div class="list-sec">
-                <div class="list-head"><span class="section-label" id="list-label">Recent events</span><span class="newtoast" id="newtoast" style="display:none">new ✦</span></div>
+                <div class="list-head"><span class="section-label" id="list-label">${tr('Recent events')}</span><span class="newtoast" id="newtoast" style="display:none">${tr('new ✦')}</span></div>
                 <div class="diag" id="diag" style="display:none"></div>
-                <div class="list" id="list"><div class="empty">Loading…</div></div>
+                <div class="list" id="list"><div class="empty">${tr('Loading…')}</div></div>
               </div>
             </div>
           </div>
@@ -1308,7 +1322,7 @@ export class FrigateModernHassCard extends HTMLElement {
       return `<button class="cam-tab ${active?'active':''}" data-camidx="${i}"><span class="cam-dot" style="color:${ok?'#4ade80':'#ef4444'}">●</span> ${name}</button>`;
     }).join('');
     el.innerHTML = `<div class="cam-tabs">${tabs}</div>
-      <button class="cam-rotate ${this._rotateTimer?'on':''}" id="rotate-btn" title="Auto-rotate">${ICONS.rotate}</button>`;
+      <button class="cam-rotate ${this._rotateTimer?'on':''}" id="rotate-btn" title="${tr('Auto-rotate')}">${ICONS.rotate}</button>`;
   }
 
   // ── interactions ──────────────────────────────────────────
@@ -1377,7 +1391,7 @@ export class FrigateModernHassCard extends HTMLElement {
     this._tab = tab;
     this.shadowRoot.querySelectorAll('[data-tab]').forEach(p=>p.classList.toggle('active',p.dataset.tab===tab));
     const lbl=this.shadowRoot.querySelector('#list-label');
-    if (lbl) lbl.textContent=({live:'Recent events',recordings:'Recordings',clips:'Clips',snapshot:'Snapshots',reviews:'Reviews',kept:'Kept'})[tab]||tab;
+    if (lbl) lbl.textContent=tr(({live:'Recent events',recordings:'Recordings',clips:'Clips',snapshot:'Snapshots',reviews:'Reviews',kept:'Kept'})[tab]||tab);
     if (tab==='live') this._showLive();
     if (tab==='reviews') this._loadReviews().then(()=>this._renderList());
     if (tab==='kept') this._loadKept().then(()=>this._renderList());
@@ -1437,15 +1451,15 @@ export class FrigateModernHassCard extends HTMLElement {
       slot.innerHTML = `
         <img src="${url}" style="width:100%;height:100%;object-fit:contain;background:#000;display:block">
         ${label}
-        <button class="btn back grid-close-btn" data-restore-slot="${camIdx}" title="Back to live">${ICONS.back}<span>Live</span></button>
-        <button class="grid-fs-btn" data-slot-fs title="Fullscreen">${ICONS.expand}</button>`;
+        <button class="btn back grid-close-btn" data-restore-slot="${camIdx}" title="${tr('Back to live')}">${ICONS.back}<span>${tr('Live')}</span></button>
+        <button class="grid-fs-btn" data-slot-fs title="${tr('Fullscreen')}">${ICONS.expand}</button>`;
     } else {
       const url = await this._resolveClipUrl(ev.id);
       slot.innerHTML = `
         <video src="${url}" controls playsinline
           style="width:100%;height:100%;object-fit:contain;background:#000;display:block"></video>
         ${label}
-        <button class="btn back grid-close-btn" data-restore-slot="${camIdx}" title="Back to live">${ICONS.back}<span>Live</span></button>`;
+        <button class="btn back grid-close-btn" data-restore-slot="${camIdx}" title="${tr('Back to live')}">${ICONS.back}<span>${tr('Live')}</span></button>`;
       this._playMedia(slot.querySelector('video'));
     }
     this._fadeLabel(slot.querySelector('.grid-label'));
@@ -1552,7 +1566,7 @@ export class FrigateModernHassCard extends HTMLElement {
     const token = ++this._playSeq;
     this._enter(); this._playing={id:ev.id};
     const viewer = this.shadowRoot.querySelector('#viewer');
-    viewer.innerHTML = '<div class="ld">Loading…</div>';
+    viewer.innerHTML = `<div class="ld">${tr('Loading…')}</div>`;
     const playUrl = await this._resolveClipUrl(ev.id);
     if (this._playSeq !== token) return;
     viewer.innerHTML=`<video src="${playUrl}" controls playsinline></video>`;
@@ -1573,7 +1587,7 @@ export class FrigateModernHassCard extends HTMLElement {
     const fallback = () => {
       if (det) return this._showClipById(det);
       const viewer = this.shadowRoot.querySelector('#viewer');
-      if (viewer) viewer.innerHTML = '<div class="ld">No recording for this period</div>';
+      if (viewer) viewer.innerHTML = `<div class="ld">${tr('No recording for this period')}</div>`;
     };
     if (!(start > 0) || end <= start) return fallback();
     const shown = this._showRecording(start, end, null, { fallback });
@@ -1586,7 +1600,7 @@ export class FrigateModernHassCard extends HTMLElement {
     const token = ++this._playSeq;
     this._enter(); this._playing={id};
     const viewer = this.shadowRoot.querySelector('#viewer');
-    viewer.innerHTML = '<div class="ld">Loading…</div>';
+    viewer.innerHTML = `<div class="ld">${tr('Loading…')}</div>`;
     const playUrl = await this._resolveClipUrl(id);
     if (this._playSeq !== token) return;
     viewer.innerHTML=`<video src="${playUrl}" controls playsinline></video>`;
@@ -1606,7 +1620,7 @@ export class FrigateModernHassCard extends HTMLElement {
     const token = ++this._playSeq; // cancel any in-flight load
     this._enter(); this._playing={rec:s};
     const viewer = this.shadowRoot.querySelector('#viewer');
-    viewer.innerHTML='<div class="ld">Loading…</div>';
+    viewer.innerHTML=`<div class="ld">${tr('Loading…')}</div>`;
     const {clientId,cam}=this._cc();
     const maxChunk = 7200;
     const chunkEnd = Math.min(e, start + maxChunk);
@@ -1623,13 +1637,13 @@ export class FrigateModernHassCard extends HTMLElement {
       <div class="rec-dl-bar">
         <div class="rec-ctl-row">
           <button class="rec-pp-btn">⏸</button>
-          <button class="rec-mute-btn" title="Mute">${ICONS.volOn}</button>
+          <button class="rec-mute-btn" title="${tr('Mute')}">${ICONS.volOn}</button>
           <span class="rec-ctl-time">0:00 / ${this._fmtDurS(clipDur)}</span>
           <input type="range" class="rec-prog" min="0" max="${clipDur}" value="0" step="1">
         </div>
         <div class="rec-dl-row">
-          <span>Download from <span class="rec-dl-time">${this._time(start)}</span></span>
-          <button class="rec-dl-btn">↓ Download</button>
+          <span>${tr('Download from')} <span class="rec-dl-time">${this._time(start)}</span></span>
+          <button class="rec-dl-btn">${tr('↓ Download')}</button>
         </div>
       </div>`;
     const vid     = viewer.querySelector('video');
@@ -1671,7 +1685,7 @@ export class FrigateModernHassCard extends HTMLElement {
       this._playMedia(vid).then(() => {
         if (muteBtn) {
           muteBtn.innerHTML = vid.muted ? ICONS.volOff : ICONS.volOn;
-          muteBtn.title = vid.muted ? 'Unmute' : 'Mute';
+          muteBtn.title = vid.muted ? tr('Unmute') : tr('Mute');
         }
       });
     }
@@ -1679,7 +1693,7 @@ export class FrigateModernHassCard extends HTMLElement {
     if (muteBtn && vid) muteBtn.addEventListener('click', () => {
       vid.muted = !vid.muted;
       muteBtn.innerHTML = vid.muted ? ICONS.volOff : ICONS.volOn;
-      muteBtn.title = vid.muted ? 'Unmute' : 'Mute';
+      muteBtn.title = vid.muted ? tr('Unmute') : tr('Mute');
     });
     if (prog && vid) {
       prog.addEventListener('mousedown', e => { e.stopPropagation(); prog._dragging = true; });
@@ -1725,7 +1739,7 @@ export class FrigateModernHassCard extends HTMLElement {
         <video src="${url}" controls playsinline
           style="width:100%;height:100%;object-fit:contain;background:#000;display:block"></video>
         ${this._gridLabel(ci, { label: 'Recording', start_time: rs })}
-        <button class="btn back grid-close-btn" data-restore-slot="${ci}" title="Back to live">${ICONS.back}<span>Live</span></button>`;
+        <button class="btn back grid-close-btn" data-restore-slot="${ci}" title="${tr('Back to live')}">${ICONS.back}<span>${tr('Live')}</span></button>`;
     this._playMedia(slot.querySelector('video'));
     this._fadeLabel(slot.querySelector('.grid-label'));
   }
@@ -1824,7 +1838,7 @@ export class FrigateModernHassCard extends HTMLElement {
         else if(!this._kept.find(e=>e.id===id)) this._kept=[{...ev},...this._kept];
         this._renderList();
         console.warn('[Frigate] retain failed',err);
-        this._toast('Could not save — check Frigate port config.');
+        this._toast(tr('Could not save — check Frigate port config.'));
       });
   }
   async _markAll() {
@@ -1883,12 +1897,12 @@ export class FrigateModernHassCard extends HTMLElement {
   _renderFilter() {
     const p=this.shadowRoot.querySelector('#filter-panel'); if(!p) return;
     const lbls=['all',...this._labels()]; const zones=['all',...this._zones()];
-    const chip=(val,cur,attr)=>`<button class="chip ${val===cur?'on':''}" data-${attr}="${val}">${val==='all'?'All':cap(val)}</button>`;
-    p.innerHTML=`<div class="frow"><span class="frow-l">Label</span>${lbls.map(l=>chip(l,this._filterLabel,'flabel')).join('')}</div>
-      <div class="frow"><span class="frow-l">Zone</span>${zones.map(z=>chip(z,this._filterZone,'fzone')).join('')}</div>
-      <div class="frow"><span class="frow-l">Show</span>
-        <button class="chip ${!this._favOnly?'on':''}" data-favonly="0">All</button>
-        <button class="chip ${this._favOnly?'on':''}" data-favonly="1">★ Favorites</button></div>`;
+    const chip=(val,cur,attr)=>`<button class="chip ${val===cur?'on':''}" data-${attr}="${val}">${val==='all'?tr('All'):lab(val)}</button>`;
+    p.innerHTML=`<div class="frow"><span class="frow-l">${tr('Label')}</span>${lbls.map(l=>chip(l,this._filterLabel,'flabel')).join('')}</div>
+      <div class="frow"><span class="frow-l">${tr('Zone')}</span>${zones.map(z=>chip(z,this._filterZone,'fzone')).join('')}</div>
+      <div class="frow"><span class="frow-l">${tr('Show')}</span>
+        <button class="chip ${!this._favOnly?'on':''}" data-favonly="0">${tr('All')}</button>
+        <button class="chip ${this._favOnly?'on':''}" data-favonly="1">${tr('★ Favorites')}</button></div>`;
   }
 
   // ── scrub / scroll ────────────────────────────────────────
@@ -1976,9 +1990,9 @@ export class FrigateModernHassCard extends HTMLElement {
     const dot=this._$('#on-dot'),lbl=this._$('#on-lbl'),title=this._$('#info-title');
     const ok=ent.state!=='unavailable';
     if(dot) dot.style.color=ok?'#4ade80':'#ef4444';
-    if(lbl) lbl.textContent=ok?'Online':'Offline';
+    if(lbl) lbl.textContent=ok?tr('Online'):tr('Offline');
     if(title) {
-      const c=this._activeCam; const n=this._config.title||(this._config.cameras.length>1?cap(camDisplayName(c)):'Camera');
+      const c=this._activeCam; const n=this._config.title||(this._config.cameras.length>1?cap(camDisplayName(c)):tr('Camera'));
       title.textContent=n;
     }
   }
@@ -1999,8 +2013,8 @@ export class FrigateModernHassCard extends HTMLElement {
     if (back) back.hidden = !(this._zoomStack && this._zoomStack.length);
     const el=this._$('#tl-range'); if(!el) return;
     const span=this._winEnd-this._winStart; const fmt=t=>this._time(t);
-    if(span<=DAY+60) el.textContent=`${this._day(this._winEnd)} · ${fmt(this._winStart)}–${this._isNowWindow()?'now':fmt(this._winEnd)}`;
-    else el.textContent=`${this._day(this._winStart)} – ${this._isNowWindow()?'now':this._day(this._winEnd)}`;
+    if(span<=DAY+60) el.textContent=`${this._day(this._winEnd)} · ${fmt(this._winStart)}–${this._isNowWindow()?tr('now'):fmt(this._winEnd)}`;
+    else el.textContent=`${this._day(this._winStart)} – ${this._isNowWindow()?tr('now'):this._day(this._winEnd)}`;
   }
   _renderLegend() {
     const el=this._$('#legend'); if(!el) return;
@@ -2011,9 +2025,9 @@ export class FrigateModernHassCard extends HTMLElement {
     if (this._eventsMode==='all') {
       html=this._config.cameras.map((c,i)=>`<span class="lg"><i style="background:${this._camColor(i)}"></i>${cap(camDisplayName(c))}</span>`).join('');
     } else {
-      html=labels.map(l=>`<span class="lg"><i style="background:${labelColor(l)}"></i>${cap(l)}</span>`).join('');
+      html=labels.map(l=>`<span class="lg"><i style="background:${labelColor(l)}"></i>${lab(l)}</span>`).join('');
     }
-    html+=`<span class="lg"><i style="background:${REC_NEUTRAL}"></i>Recording</span>`;
+    html+=`<span class="lg"><i style="background:${REC_NEUTRAL}"></i>${tr('Recording')}</span>`;
     el.innerHTML=html;
   }
 
@@ -2023,7 +2037,7 @@ export class FrigateModernHassCard extends HTMLElement {
     const events=this._allDisplayEvents();
     if(!events.length||this._viewMode==='grid'){ row.style.display='none'; return; }
     row.style.display='block';
-    row.innerHTML=`<div class="latest-label"><span class="section-label">Latest event</span></div>
+    row.innerHTML=`<div class="latest-label"><span class="section-label">${tr('Latest event')}</span></div>
       <div class="latest-body">${this._eventCardHTML(events[0],false,true)}</div>`;
   }
 
@@ -2111,7 +2125,7 @@ export class FrigateModernHassCard extends HTMLElement {
         const left = (ev.start_time - s) / span * 100;
         const col = ci >= 0 ? this._camColor(ci) : labelColor(ev.label);
         const where = all ? ` · ${cap(ci >= 0 ? camDisplayName(this._config.cameras[ci]) : (ev.camera || '').replace(/_/g, ' '))}` : '';
-        html += `<div class="t-ev" data-tick="${ev.id}"${hl} style="left:${left}%;background:${col}" title="${cap(ev.label)} ${this._time(ev.start_time)}${where}"></div>`;
+        html += `<div class="t-ev" data-tick="${ev.id}"${hl} style="left:${left}%;background:${col}" title="${lab(ev.label)} ${this._time(ev.start_time)}${where}"></div>`;
         continue;
       }
       const a = g.evs[0].start_time, b = g.evs[g.evs.length - 1].start_time;
@@ -2137,16 +2151,16 @@ export class FrigateModernHassCard extends HTMLElement {
     const zone=ev.zones&&ev.zones.length?ev.zones[0]:''; const subl=ev.sub_label?`<span class="subl">${ev.sub_label}</span>`:'';
     const desc=expanded&&ev.data?.description?`<div class="desc">${ev.data.description}</div>`:'';
     const thumb=ev.has_snapshot||ev.has_clip?`<img src="${this._media(ev.id,'thumbnail.jpg')}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="tph" style="display:none">${ICONS.person}</div>`:`<div class="tph">${ICONS.person}</div>`;
-    const badge=ev.has_clip?'<span class="bc">clip</span>':(ev.has_snapshot?'<span class="bs">snap</span>':'');
-    const dlClip=ev.has_clip?`<button class="ico" data-dl="${ev.id}" data-dl-file="clip.mp4" title="Download clip">${ICONS.download}</button>`:'';
-    const dlSnap=ev.has_snapshot?`<button class="ico" data-dl="${ev.id}" data-dl-file="snapshot.jpg" title="Download snapshot">${ICONS.snapshot}</button>`:'';
+    const badge=ev.has_clip?`<span class="bc">${tr('clip')}</span>`:(ev.has_snapshot?`<span class="bs">${tr('snap')}</span>`:'');
+    const dlClip=ev.has_clip?`<button class="ico" data-dl="${ev.id}" data-dl-file="clip.mp4" title="${tr('Download clip')}">${ICONS.download}</button>`:'';
+    const dlSnap=ev.has_snapshot?`<button class="ico" data-dl="${ev.id}" data-dl-file="snapshot.jpg" title="${tr('Download snapshot')}">${ICONS.snapshot}</button>`:'';
     // show camera name in multi-cam all-events mode
     const camLabel=(this._eventsMode==='all'&&this._config.cameras.length>1)?`<span class="cam-badge">${(ev.camera||'').replace(/_/g,' ')}</span>`:'';
     // compact: wrap everything in a tighter layout, actions horizontal
     return `<div class="ec${compact?' compact':''}" data-ev="${ev.id}">
       <div class="et">${thumb}<div class="ed">${this._dur(ev)}s</div></div>
       <div class="ei">
-        <div class="etop"><span class="tb" style="background:${col}33;color:${col}">${cap(ev.label)}</span>${subl}${badge}${camLabel}${score?`<span class="esc">${score}</span>`:''}</div>
+        <div class="etop"><span class="tb" style="background:${col}33;color:${col}">${lab(ev.label)}</span>${subl}${badge}${camLabel}${score?`<span class="esc">${score}</span>`:''}</div>
         <div class="em"><span>${ICONS.clock}${this._time(ev.start_time)}</span>${zone?`<span>${ICONS.pin}${zone}</span>`:''}</div>
         ${desc}
       </div>
@@ -2164,12 +2178,12 @@ export class FrigateModernHassCard extends HTMLElement {
     }
     if(this._tab==='reviews') return this._renderReviews(list);
     if(this._tab==='kept'){
-      if(!this._kept.length){list.innerHTML=`<div class="empty">No kept events<br><span style="opacity:.6">star an event to keep it</span></div>`;return;}
+      if(!this._kept.length){list.innerHTML=`<div class="empty">${tr('No kept events')}<br><span style="opacity:.6">${tr('star an event to keep it')}</span></div>`;return;}
       list.innerHTML=this._kept.map(ev=>this._eventCardHTML(ev,false)).join(''); return;
     }
     const events=this._filtered();
-    if(!events.length){list.innerHTML=`<div class="empty">No events in this window</div>`;return;}
-    list.innerHTML=events.map(ev=>this._eventCardHTML(ev,false)).join('')+(this._exhausted?'<div class="end">— end —</div>':'<div class="more">scroll for older…</div>');
+    if(!events.length){list.innerHTML=`<div class="empty">${tr('No events in this window')}</div>`;return;}
+    list.innerHTML=events.map(ev=>this._eventCardHTML(ev,false)).join('')+(this._exhausted?`<div class="end">${tr('— end —')}</div>`:`<div class="more">${tr('scroll for older…')}</div>`);
   }
   _renderRecordings(list) {
     // In grid view the list covers every camera, each row naming its camera.
@@ -2179,12 +2193,12 @@ export class FrigateModernHassCard extends HTMLElement {
     if (all) this._config.cameras.forEach((c,ci)=>{ const cc=this._camCache[c.entity]; if(cc) for(const r of this._mergeRecs(cc.recordings||[])) recs.push({...r,ci}); });
     else recs=this._mergeRecs(this._recordings);
     recs.sort((a,b)=>b.start_time-a.start_time);
-    if(!recs.length){list.innerHTML='<div class="empty">No recordings in this window</div>';return;}
+    if(!recs.length){list.innerHTML=`<div class="empty">${tr('No recordings in this window')}</div>`;return;}
     list.innerHTML=recs.map(r=>{
       const rs=Math.floor(r.start_time), re=Math.floor(r.end_time||Date.now()/1000);
       const d=Math.max(1,re-rs); const mm=Math.floor(d/60),ss=d%60;
       const dur=`${mm?mm+'m ':''}${ss}s`;
-      const seekHint = d > 300 && !all ? ' <span class="seek-hint">· click to seek</span>' : '';
+      const seekHint = d > 300 && !all ? ` <span class="seek-hint">${tr('· click to seek')}</span>` : '';
       const cam = all ? `<i class="cam-dot-lbl" style="background:${this._camColor(r.ci)}"></i>${cap(camDisplayName(this._config.cameras[r.ci]))} · ` : '';
       return `<div class="rec" data-rs="${rs}" data-re="${re}"${all?` data-ci="${r.ci}"`:''}>
         <div class="ric">${ICONS.recordings}</div>
@@ -2197,17 +2211,17 @@ export class FrigateModernHassCard extends HTMLElement {
     }).join('');
   }
   _renderReviews(list) {
-    if(!this._reviews.length){list.innerHTML='<div class="empty">No reviews in this window</div>';return;}
+    if(!this._reviews.length){list.innerHTML=`<div class="empty">${tr('No reviews in this window')}</div>`;return;}
     const allRevs=[...this._reviews].sort((a,b)=>b.start_time-a.start_time);
     const unrev=allRevs.filter(r=>!r.has_been_reviewed).length;
     const revs=this._showReviewed ? allRevs : allRevs.filter(r=>!r.has_been_reviewed);
-    const toggleLbl=this._showReviewed?'Hide reviewed':'Show reviewed';
-    const head=`<div class="rev-head"><span>${unrev} to review</span><div style="display:flex;gap:5px;align-items:center">${unrev?`<button class="chip on" data-mark-all>Mark all</button>`:''}<button class="chip" data-toggle-reviewed>${toggleLbl}</button></div></div>`;
-    if(!revs.length){list.innerHTML=head+'<div class="empty">Nothing to review ✓</div>';return;}
+    const toggleLbl=this._showReviewed?tr('Hide reviewed'):tr('Show reviewed');
+    const head=`<div class="rev-head"><span>${tr('{n} to review',{n:unrev})}</span><div style="display:flex;gap:5px;align-items:center">${unrev?`<button class="chip on" data-mark-all>${tr('Mark all')}</button>`:''}<button class="chip" data-toggle-reviewed>${toggleLbl}</button></div></div>`;
+    if(!revs.length){list.innerHTML=head+`<div class="empty">${tr('Nothing to review ✓')}</div>`;return;}
     list.innerHTML=head+revs.map(r=>{
       const sev=r.severity==='alert'?'alert':'detection';
-      const objs=(r.data?.objects||[]).map(cap).join(', ');
-      const title=r.data?.metadata?.title||objs||cap(r.severity);
+      const objs=(r.data?.objects||[]).map(lab).join(', ');
+      const title=r.data?.metadata?.title||objs||lab(r.severity);
       // Frigate does not return detections in time order, so [0] was usually an
       // object from halfway through the period. Event ids start with their epoch,
       // which parseFloat reads, so sorting on that gives the earliest.
@@ -2215,7 +2229,7 @@ export class FrigateModernHassCard extends HTMLElement {
       const firstDet=dets[0]||'';
       const reviewed=r.has_been_reviewed;
       const thumb=firstDet?`<div class="rev-th"><img src="${this._media(firstDet,'thumbnail.jpg')}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`:'';
-      return`<div class="rev ${sev}" data-review-id="${r.id}" data-review-open="${firstDet}" data-rv-s="${r.start_time}" data-rv-e="${r.end_time||''}"><div class="rev-sev ${sev}"></div>${thumb}<div class="rev-inf"><div class="rev-t">${title}</div><div class="rev-m">${this._time(r.start_time)} · ${cap(sev)}${reviewed?' · ✓':' · tap'}</div></div>${reviewed?'':`<button class="ico" data-mark>${ICONS.reviews}</button>`}</div>`;
+      return`<div class="rev ${sev}" data-review-id="${r.id}" data-review-open="${firstDet}" data-rv-s="${r.start_time}" data-rv-e="${r.end_time||''}"><div class="rev-sev ${sev}"></div>${thumb}<div class="rev-inf"><div class="rev-t">${title}</div><div class="rev-m">${this._time(r.start_time)} · ${lab(sev)}${reviewed?' · ✓':' · '+tr('tap')}</div></div>${reviewed?'':`<button class="ico" data-mark>${ICONS.reviews}</button>`}</div>`;
     }).join('');
   }
 
