@@ -151,6 +151,24 @@ export const IT = {
   '1 large + 5': '1 grande + 5',
   '1 large + 7': '1 grande + 7',
   '2 large + 8': '2 grandi + 8',
+  // PTZ
+  'Up': 'Su',
+  'Down': 'Giù',
+  'Left': 'Sinistra',
+  'Right': 'Destra',
+  'Stop': 'Stop',
+  'Zoom in': 'Ingrandisci',
+  'Zoom out': 'Riduci',
+  'Presets': 'Posizioni',
+  'Camera controls': 'Comandi telecamera',
+  'Camera control failed': 'Comando alla telecamera non riuscito',
+  'PTZ controls': 'Comandi PTZ',
+  'Show pan, tilt and zoom buttons over the live picture of cameras that support them.': "Mostra i pulsanti di movimento e zoom sull'immagine live delle telecamere che li supportano.",
+  'Show the PTZ pad on this camera': "Mostra i comandi PTZ su questa telecamera",
+  'What moves this camera': "Cosa muove questa telecamera",
+  'Click the picture to aim the camera': "Tocca l'immagine per puntare la telecamera",
+  'Horizontal field of view in degrees, used to aim by click': "Campo visivo orizzontale in gradi, usato per puntare con il clic",
+  'FOV': "Campo",
 };
 
 // Detection labels as Frigate names them.

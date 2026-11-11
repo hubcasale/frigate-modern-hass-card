@@ -91,6 +91,9 @@ default_view: single     # or 'grid'
 | `stack_on_mobile` | boolean | `true` | Show one camera per row on a phone, whatever the layout says |
 | `min_tile_width` | number | `200` | Narrowest a grid tile may get, in pixels, before the grid drops a column |
 | `events_collapsed` | boolean | `false` | Start with the events panel hidden, giving the cameras the full width |
+| `cameras[].ptz` | boolean | `true` | Pan / tilt / zoom pad over the live picture, for cameras Frigate reports as PTZ (needs the Frigate integration's `frigate.ptz` service and Frigate's ONVIF set up). `ptz: false` hides it on that camera; the editor has a PTZ checkbox per camera |
+| `cameras[].ptz_tapo` | string | | Drive that camera with Tapo Control's `button.<name>_move_up/down/left/right` and `select.<name>_move_to_preset` instead of Frigate (for cameras Frigate's ONVIF cannot steer, e.g. a Tapo dual-lens tele lens). Adds a crosshair button: when on, clicking the picture aims the camera there |
+| `cameras[].ptz_fov` | number | `30` | Horizontal field of view in degrees of that camera, used to turn a click into pan / tilt degrees. Raise it if the camera overshoots, lower it if it falls short |
 | `live_provider` | string | `hls` | Live view source: `hls` (Home Assistant stream) or `go2rtc` |
 | `go2rtc_mode` | string | `mse` | go2rtc transport: `mse`, `webrtc`, or `auto` |
 | `debug` | boolean | `false` | Log to the browser console why the live view picked what it picked |

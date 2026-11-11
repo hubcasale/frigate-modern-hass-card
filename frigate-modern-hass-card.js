@@ -50,6 +50,16 @@ const ICONS = {
   panelOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M14 5v14"/></svg>',
   grid:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3v8h8V3H3zm6 6H5V5h4v4zm-6 4v8h8v-8H3zm6 6H5v-4h4v4zm4-16v8h8V3h-8zm6 6h-4V5h4v4zm-6 4v8h8v-8h-8zm6 6h-4v-4h4v4z"/></svg>',
   person:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>',
+  // PTZ controls: a pad of four arrows, zoom, stop.
+  ptz:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.2 3.5h-2.2v4h-2v-4H8.8L12 2zm0 20l-3.2-3.5H11v-4h2v4h2.2L12 22zM2 12l3.5-3.2v2.2h4v2h-4v2.2L2 12zm20 0l-3.5 3.2V13h-4v-2h4V8.8L22 12zM12 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg>',
+  ptzUp:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.4 15.4L12 10.8l4.6 4.6L18 14l-6-6-6 6z"/></svg>',
+  ptzDown:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.4 8.6L12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg>',
+  ptzLeft:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.4 7.4L10.8 12l4.6 4.6L14 18l-6-6 6-6z"/></svg>',
+  ptzRight:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.6 16.6l4.6-4.6-4.6-4.6L10 6l6 6-6 6z"/></svg>',
+  ptzStop:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg>',
+  crosshair:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="6.5"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg>',
+  zoomIn:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm.5-7H9v2H7v1h2v2h1v-2h2V9h-2V7z"/></svg>',
+  zoomOut:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zM7 9h5v1H7V9z"/></svg>',
 };
 
 // ── helpers ──────────────────────────────────────────────────
@@ -277,6 +287,24 @@ const IT = {
   '1 large + 5': '1 grande + 5',
   '1 large + 7': '1 grande + 7',
   '2 large + 8': '2 grandi + 8',
+  // PTZ
+  'Up': 'Su',
+  'Down': 'Giù',
+  'Left': 'Sinistra',
+  'Right': 'Destra',
+  'Stop': 'Stop',
+  'Zoom in': 'Ingrandisci',
+  'Zoom out': 'Riduci',
+  'Presets': 'Posizioni',
+  'Camera controls': 'Comandi telecamera',
+  'Camera control failed': 'Comando alla telecamera non riuscito',
+  'PTZ controls': 'Comandi PTZ',
+  'Show pan, tilt and zoom buttons over the live picture of cameras that support them.': "Mostra i pulsanti di movimento e zoom sull'immagine live delle telecamere che li supportano.",
+  'Show the PTZ pad on this camera': "Mostra i comandi PTZ su questa telecamera",
+  'What moves this camera': "Cosa muove questa telecamera",
+  'Click the picture to aim the camera': "Tocca l'immagine per puntare la telecamera",
+  'Horizontal field of view in degrees, used to aim by click': "Campo visivo orizzontale in gradi, usato per puntare con il clic",
+  'FOV': "Campo",
 };
 
 // Detection labels as Frigate names them.
@@ -443,6 +471,24 @@ const DE = {
   '1 large + 5': '1 groß + 5',
   '1 large + 7': '1 groß + 7',
   '2 large + 8': '2 groß + 8',
+  // PTZ
+  'Up': 'Hoch',
+  'Down': 'Runter',
+  'Left': 'Links',
+  'Right': 'Rechts',
+  'Stop': 'Stopp',
+  'Zoom in': 'Vergrößern',
+  'Zoom out': 'Verkleinern',
+  'Presets': 'Positionen',
+  'Camera controls': 'Kamerasteuerung',
+  'Camera control failed': 'Kamerasteuerung fehlgeschlagen',
+  'PTZ controls': 'PTZ-Steuerung',
+  'Show pan, tilt and zoom buttons over the live picture of cameras that support them.': 'Zeigt Schwenk-, Neige- und Zoomtasten über dem Livebild von Kameras, die sie unterstützen.',
+  'Show the PTZ pad on this camera': "PTZ-Steuerung für diese Kamera anzeigen",
+  'What moves this camera': "Was diese Kamera bewegt",
+  'Click the picture to aim the camera': "Auf das Bild klicken, um die Kamera auszurichten",
+  'Horizontal field of view in degrees, used to aim by click': "Horizontaler Bildwinkel in Grad, zum Ausrichten per Klick",
+  'FOV': "Winkel",
 };
 
 // Detection labels as Frigate names them.
@@ -609,6 +655,24 @@ const FR = {
   '1 large + 5': '1 grande + 5',
   '1 large + 7': '1 grande + 7',
   '2 large + 8': '2 grandes + 8',
+  // PTZ
+  'Up': 'Haut',
+  'Down': 'Bas',
+  'Left': 'Gauche',
+  'Right': 'Droite',
+  'Stop': 'Arrêt',
+  'Zoom in': 'Zoom avant',
+  'Zoom out': 'Zoom arrière',
+  'Presets': 'Positions',
+  'Camera controls': 'Commandes de la caméra',
+  'Camera control failed': 'Échec de la commande de la caméra',
+  'PTZ controls': 'Commandes PTZ',
+  'Show pan, tilt and zoom buttons over the live picture of cameras that support them.': "Affiche les boutons de panoramique, d'inclinaison et de zoom sur l'image en direct des caméras qui les prennent en charge.",
+  'Show the PTZ pad on this camera': "Afficher les commandes PTZ sur cette caméra",
+  'What moves this camera': "Ce qui déplace cette caméra",
+  'Click the picture to aim the camera': "Cliquez sur l'image pour orienter la caméra",
+  'Horizontal field of view in degrees, used to aim by click': "Champ de vision horizontal en degrés, utilisé pour viser par clic",
+  'FOV': "Champ",
 };
 
 // Detection labels as Frigate names them.
@@ -775,6 +839,24 @@ const ES = {
   '1 large + 5': '1 grande + 5',
   '1 large + 7': '1 grande + 7',
   '2 large + 8': '2 grandes + 8',
+  // PTZ
+  'Up': 'Arriba',
+  'Down': 'Abajo',
+  'Left': 'Izquierda',
+  'Right': 'Derecha',
+  'Stop': 'Parar',
+  'Zoom in': 'Acercar',
+  'Zoom out': 'Alejar',
+  'Presets': 'Posiciones',
+  'Camera controls': 'Controles de la cámara',
+  'Camera control failed': 'Error al controlar la cámara',
+  'PTZ controls': 'Controles PTZ',
+  'Show pan, tilt and zoom buttons over the live picture of cameras that support them.': 'Muestra los botones de giro, inclinación y zoom sobre la imagen en directo de las cámaras compatibles.',
+  'Show the PTZ pad on this camera': "Mostrar los controles PTZ en esta cámara",
+  'What moves this camera': "Qué mueve esta cámara",
+  'Click the picture to aim the camera': "Haz clic en la imagen para apuntar la cámara",
+  'Horizontal field of view in degrees, used to aim by click': "Campo de visión horizontal en grados, para apuntar con el clic",
+  'FOV': "Campo",
 };
 
 // Detection labels as Frigate names them.
@@ -941,6 +1023,24 @@ const PT = {
   '1 large + 5': '1 grande + 5',
   '1 large + 7': '1 grande + 7',
   '2 large + 8': '2 grandes + 8',
+  // PTZ
+  'Up': 'Cima',
+  'Down': 'Baixo',
+  'Left': 'Esquerda',
+  'Right': 'Direita',
+  'Stop': 'Parar',
+  'Zoom in': 'Aproximar',
+  'Zoom out': 'Afastar',
+  'Presets': 'Posições',
+  'Camera controls': 'Controlos da câmara',
+  'Camera control failed': 'Falha no controlo da câmara',
+  'PTZ controls': 'Controlos PTZ',
+  'Show pan, tilt and zoom buttons over the live picture of cameras that support them.': 'Mostra os botões de rotação, inclinação e zoom sobre a imagem em direto das câmaras compatíveis.',
+  'Show the PTZ pad on this camera': "Mostrar os controlos PTZ nesta câmara",
+  'What moves this camera': "O que move esta câmara",
+  'Click the picture to aim the camera': "Clique na imagem para apontar a câmara",
+  'Horizontal field of view in degrees, used to aim by click': "Campo de visão horizontal em graus, para apontar com o clique",
+  'FOV': "Campo",
 };
 
 // Detection labels as Frigate names them.
@@ -1107,6 +1207,24 @@ const NL = {
   '1 large + 5': '1 groot + 5',
   '1 large + 7': '1 groot + 7',
   '2 large + 8': '2 groot + 8',
+  // PTZ
+  'Up': 'Omhoog',
+  'Down': 'Omlaag',
+  'Left': 'Links',
+  'Right': 'Rechts',
+  'Stop': 'Stop',
+  'Zoom in': 'Inzoomen',
+  'Zoom out': 'Uitzoomen',
+  'Presets': 'Posities',
+  'Camera controls': 'Camerabediening',
+  'Camera control failed': 'Camerabediening mislukt',
+  'PTZ controls': 'PTZ-bediening',
+  'Show pan, tilt and zoom buttons over the live picture of cameras that support them.': "Toont knoppen voor draaien, kantelen en zoomen op het live beeld van camera's die dat ondersteunen.",
+  'Show the PTZ pad on this camera': "PTZ-bediening tonen op deze camera",
+  'What moves this camera': "Wat deze camera beweegt",
+  'Click the picture to aim the camera': "Klik op het beeld om de camera te richten",
+  'Horizontal field of view in degrees, used to aim by click': "Horizontaal beeldveld in graden, om met een klik te richten",
+  'FOV': "Veld",
 };
 
 // Detection labels as Frigate names them.
@@ -1273,6 +1391,24 @@ const PL = {
   '1 large + 5': '1 duża + 5',
   '1 large + 7': '1 duża + 7',
   '2 large + 8': '2 duże + 8',
+  // PTZ
+  'Up': 'W górę',
+  'Down': 'W dół',
+  'Left': 'W lewo',
+  'Right': 'W prawo',
+  'Stop': 'Stop',
+  'Zoom in': 'Przybliż',
+  'Zoom out': 'Oddal',
+  'Presets': 'Pozycje',
+  'Camera controls': 'Sterowanie kamerą',
+  'Camera control failed': 'Nie udało się sterować kamerą',
+  'PTZ controls': 'Sterowanie PTZ',
+  'Show pan, tilt and zoom buttons over the live picture of cameras that support them.': 'Pokazuje przyciski obrotu, pochylenia i zoomu na obrazie na żywo kamer, które je obsługują.',
+  'Show the PTZ pad on this camera': "Pokaż sterowanie PTZ dla tej kamery",
+  'What moves this camera': "Co porusza tę kamerę",
+  'Click the picture to aim the camera': "Kliknij obraz, aby skierować kamerę",
+  'Horizontal field of view in degrees, used to aim by click': "Poziome pole widzenia w stopniach, do celowania kliknięciem",
+  'FOV': "Kąt",
 };
 
 // Detection labels as Frigate names them.
@@ -1431,6 +1567,27 @@ const STYLES = `
   .ph-spin{width:24px;height:24px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--c-acc);border-radius:50%;animation:spin .8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .feed-top{position:absolute;top:10px;left:12px;right:12px;z-index:6;display:flex;align-items:center;gap:8px;}
+  /* PTZ pad over the live picture: bottom right, big targets, no hover needed. */
+  .aim{position:absolute;inset:0;z-index:6;cursor:crosshair;touch-action:manipulation;background:rgba(59,130,246,.06);box-shadow:inset 0 0 0 2px rgba(59,130,246,.55);}
+  .aim[hidden]{display:none;}
+  .aim-dot{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 2px rgba(59,130,246,.8);pointer-events:none;animation:aimdot .9s ease-out forwards;}
+  @keyframes aimdot{from{transform:scale(.4);opacity:1;}to{transform:scale(1.6);opacity:0;}}
+  .ptz{position:absolute;right:12px;bottom:12px;z-index:7;display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .ptz[hidden]{display:none;}
+  .ptz-toggle,.ptz-btn{background:rgba(15,21,40,.82);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
+  .ptz-toggle{width:44px;height:44px;} .ptz-toggle svg{width:22px;height:22px;}
+  .ptz-toggle.on{background:var(--c-acc,#3b82f6);border-color:var(--c-acc,#3b82f6);}
+  .ptz-panel{display:flex;flex-direction:row;align-items:flex-end;gap:8px;padding:8px;border-radius:16px;background:rgba(15,21,40,.55);}
+  .ptz-panel[hidden]{display:none;}
+  .ptz-row{display:flex;align-items:center;gap:8px;}
+  .ptz.closed .ptz-presets{display:none;}
+  .ptz-pad{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:3px;}
+  .ptz-pad .ptz-btn{width:44px;height:44px;} .ptz-btn svg{width:24px;height:24px;display:block;}
+  .ptz-up{grid-column:2;grid-row:1;} .ptz-left{grid-column:1;grid-row:2;} .ptz-stop{grid-column:2;grid-row:2;}
+  .ptz-right{grid-column:3;grid-row:2;} .ptz-down{grid-column:2;grid-row:3;}
+  .ptz-btn:active{background:var(--c-acc,#3b82f6);border-color:var(--c-acc,#3b82f6);}
+  .ptz-zoom{display:flex;flex-direction:column;gap:6px;} .ptz-zoom .ptz-btn{width:44px;height:44px;}
+  .ptz-presets{background:rgba(15,21,40,.9);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:10px;padding:8px 10px;font-size:13px;min-height:44px;max-width:150px;}
   .btn{display:inline-flex;align-items:center;gap:5px;background:rgba(15,21,40,.82);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:6px 11px;font-size:12px;font-weight:600;cursor:pointer;}
   .btn svg{width:14px;height:14px;}
 
@@ -2395,6 +2552,7 @@ class FrigateModernHassCard extends HTMLElement {
     this._streamMuted = true; // initial live-view mute state; never changed after mount (see _mountEngine)
     this._showReviewed = false; // reviews: hide reviewed by default
     this._domCache = {}; // querySelector result cache — cleared on re-render
+    this._ptzOpen = false; this._ptzHeld = null; this._ptzTimer = null; // PTZ pad state
   }
 
   static getConfigElement() { return document.createElement(CARD_TAG+'-editor'); }
@@ -2403,7 +2561,12 @@ class FrigateModernHassCard extends HTMLElement {
   setConfig(config) {
     let cameras;
     if (config.cameras && Array.isArray(config.cameras) && config.cameras.length)
-      cameras = config.cameras.map(c => ({ entity:c.entity, name:c.name||null, span:normSpan(c.span), color: isHex(c.color) ? c.color : null }));
+      cameras = config.cameras.map(c => ({ entity:c.entity, name:c.name||null, span:normSpan(c.span), color: isHex(c.color) ? c.color : null, ptz: c.ptz === false ? false : null,
+        // Name of a Tapo Control camera whose move buttons drive this one
+        // (button.<name>_move_up ...), for cameras Frigate's ONVIF cannot steer.
+        // Horizontal field of view in degrees, for aiming by click (Tapo Control only).
+        ptzFov: Math.max(5, Math.min(180, Number(c.ptz_fov) || 30)),
+        ptzTapo: c.ptz_tapo ? String(c.ptz_tapo).replace(/^(button|select)\./, '').replace(/_move_(up|down|left|right|to_preset)$/, '') : null }));
     else if (config.camera_entity)
       cameras = [{ entity:config.camera_entity, name:config.title||null, span:normSpan() }];
     else throw new Error('camera_entity or cameras[] required');
@@ -2524,6 +2687,7 @@ class FrigateModernHassCard extends HTMLElement {
     if (this._unsub) { try { this._unsub.then(u=>u&&u()); } catch(_) {} this._unsub=null; }
     if (this._ro) this._ro.disconnect();
     this._revokeClipBlob();
+    this._ptzStop();
     this._teardownGo2rtc();
     this._teardownGridGo2rtc();
   }
@@ -2566,7 +2730,7 @@ class FrigateModernHassCard extends HTMLElement {
     // Only start the single view player when it is the one on screen. Mounting
     // it behind the grid opened a stream nobody could see, competing with the
     // tiles for bandwidth and connections.
-    if (!startInGrid) await this._mountEngine();
+    if (!startInGrid) { await this._mountEngine(); this._updatePtz(); }
     await this._loadWindow(true);
     this._loadCalendar();
     this._subscribe();
@@ -3185,6 +3349,179 @@ class FrigateModernHassCard extends HTMLElement {
     giveUp();
   }
 
+  // ── PTZ ───────────────────────────────────────────────────
+  // Pan / tilt / zoom over the live picture. Frigate says what a camera can do
+  // (frigate/ptz/info); the moves go through the frigate.ptz service, which
+  // publishes to Frigate's own MQTT topic. A move runs until a stop arrives, so
+  // the pad moves while a button is held and stops on release, like Frigate's
+  // own UI. Nothing here needs hover: it is meant for a wall tablet.
+  async _updatePtz() {
+    const box = this.shadowRoot.querySelector('#ptz'); if (!box) return;
+    const cam = this._activeCam;
+    const live = this._viewMode === 'single' && this.shadowRoot.querySelector('#engine')?.style.display !== 'none';
+    if (!cam || cam.ptz === false || !live) { this._ptzStop(); this._ptzAim = false; this._applyAim(); box.hidden = true; return; }
+    const cc = this._camCache[cam.entity];
+    if (cam.ptzTapo) {
+      const st = this._hass?.states || {};
+      const p = cam.ptzTapo;
+      const pt = ['up','down','left','right'].every(d => st[`button.${p}_move_${d}`]);
+      const presets = (st[`select.${p}_move_to_preset`]?.attributes?.options || []).filter(o => o && !/^(none|unknown|unavailable)$/i.test(o));
+      if (!pt && !presets.length) { box.hidden = true; return; }
+      this._renderPtz(box, { pt, zoom:false, stop:false, aim: pt && !!st[`number.${p}_movement_angle`], presets });
+      box.hidden = false;
+      return;
+    }
+    if (!cc || !cc.cam) { box.hidden = true; return; }
+    if (!cc.ptzInfo) {
+      cc.ptzInfo = (async () => {
+        try {
+          const info = await this._ws({ type:'frigate/ptz/info', instance_id:cc.clientId, camera:cc.cam });
+          const f = Array.isArray(info?.features) ? info.features : [];
+          const pt = f.some(x => /^pt/.test(x)), zoom = f.some(x => /zoom/.test(x));
+          const presets = Array.isArray(info?.presets) ? info.presets : [];
+          return (pt || zoom || presets.length) ? { pt, zoom, stop:true, presets } : null;
+        } catch (_) { return null; }
+      })();
+    }
+    const info = await cc.ptzInfo;
+    if (this._activeCam?.entity !== cam.entity) return; // switched while asking
+    if (!info) { box.hidden = true; return; }
+    this._renderPtz(box, info);
+    box.hidden = false;
+  }
+
+  _renderPtz(box, info) {
+    const dir = (d, icon, label) => `<button class="ptz-btn ptz-${d}" data-ptz-move="${d}" title="${label}" aria-label="${label}">${icon}</button>`;
+    const pad = info.pt ? `<div class="ptz-pad">
+        ${dir('up', ICONS.ptzUp, tr('Up'))}
+        ${dir('left', ICONS.ptzLeft, tr('Left'))}
+        ${info.stop ? `<button class="ptz-btn ptz-stop" data-ptz-stop title="${tr('Stop')}" aria-label="${tr('Stop')}">${ICONS.ptzStop}</button>` : ''}
+        ${dir('right', ICONS.ptzRight, tr('Right'))}
+        ${dir('down', ICONS.ptzDown, tr('Down'))}
+      </div>` : '';
+    const zoom = info.zoom ? `<div class="ptz-zoom">
+        <button class="ptz-btn" data-ptz-zoom="in" title="${tr('Zoom in')}" aria-label="${tr('Zoom in')}">${ICONS.zoomIn}</button>
+        <button class="ptz-btn" data-ptz-zoom="out" title="${tr('Zoom out')}" aria-label="${tr('Zoom out')}">${ICONS.zoomOut}</button>
+      </div>` : '';
+    const presets = info.presets.length ? `<select class="ptz-presets" data-ptz-preset aria-label="${tr('Presets')}">
+        <option value="">${tr('Presets')}</option>
+        ${info.presets.map(p => `<option value="${String(p).replace(/"/g,'&quot;')}">${p}</option>`).join('')}
+      </select>` : '';
+    box.classList.toggle('closed', !this._ptzOpen);
+    box.innerHTML = `<div class="ptz-panel" ${this._ptzOpen ? '' : 'hidden'}>${pad}${zoom}</div>
+      <div class="ptz-row">${presets}${info.aim ? `<button class="ptz-toggle ptz-aimbtn${this._ptzAim ? ' on' : ''}" data-ptz-aim title="${tr('Click the picture to aim the camera')}" aria-label="${tr('Click the picture to aim the camera')}">${ICONS.crosshair}</button>` : ''}<button class="ptz-toggle${this._ptzOpen ? ' on' : ''}" data-ptz-toggle title="${tr('Camera controls')}" aria-label="${tr('Camera controls')}">${ICONS.ptz}</button></div>`;
+    // Held buttons: pointer capture keeps the release coming to the button even
+    // if the finger slides off it, so the stop is never lost.
+    box.onpointerdown = e => {
+      const mv = e.target.closest('[data-ptz-move]'), zm = e.target.closest('[data-ptz-zoom]');
+      if (!mv && !zm) return;
+      e.preventDefault(); e.stopPropagation();
+      try { (mv || zm).setPointerCapture(e.pointerId); } catch (_) {}
+      this._ptzStart(mv ? 'move' : 'zoom', mv ? mv.dataset.ptzMove : zm.dataset.ptzZoom);
+    };
+    const release = () => this._ptzStop();
+    box.onpointerup = release; box.onpointercancel = release; box.onlostpointercapture = release;
+    box.onclick = e => {
+      e.stopPropagation();
+      if (e.target.closest('[data-ptz-stop]')) return this._ptzStop(true);
+      if (e.target.closest('[data-ptz-aim]')) {
+        this._ptzAim = !this._ptzAim; this._applyAim();
+        e.target.closest('[data-ptz-aim]').classList.toggle('on', this._ptzAim);
+        if (this._ptzAim) this._toast(tr('Click the picture to aim the camera'), 2500);
+        return;
+      }
+      if (e.target.closest('[data-ptz-toggle]')) {
+        this._ptzOpen = !this._ptzOpen;
+        if (!this._ptzOpen) { this._ptzStop(); this._ptzAim = false; this._applyAim(); box.querySelector('[data-ptz-aim]')?.classList.remove('on'); }
+        box.querySelector('.ptz-panel').hidden = !this._ptzOpen;
+        box.querySelector('.ptz-toggle').classList.toggle('on', this._ptzOpen);
+        box.classList.toggle('closed', !this._ptzOpen);
+      }
+    };
+    box.onchange = e => {
+      const sel = e.target.closest('[data-ptz-preset]'); if (!sel || !sel.value) return;
+      this._ptzCall('preset', sel.value);
+      this._toast(sel.value, 1500);
+      sel.value = '';
+    };
+  }
+
+  // Aim by click: the point clicked is turned into pan and tilt degrees from its
+  // distance to the middle of the picture and the camera's field of view
+  // (ptz_fov), then sent as relative moves. Tapo Control's buttons move by the
+  // "movement angle" number (5 to 120 degrees, steps of 5), so each axis sets
+  // that number, presses once, and the original value is put back afterwards.
+  _applyAim() {
+    const el = this.shadowRoot.querySelector('#aim'); if (!el) return;
+    el.hidden = !this._ptzAim;
+    el.onclick = this._ptzAim ? e => this._aimAt(e) : null;
+  }
+  async _aimAt(e) {
+    const cam = this._activeCam; const p = cam?.ptzTapo; if (!p || this._aiming) return;
+    const r = e.currentTarget.getBoundingClientRect(); if (!r.width || !r.height) return;
+    const fx = (e.clientX - r.left) / r.width - 0.5, fy = (e.clientY - r.top) / r.height - 0.5;
+    const hfov = cam.ptzFov || 30, vfov = hfov * r.height / r.width;
+    const pan = fx * hfov, tilt = -fy * vfov;   // right and up are positive
+    // marker where it was clicked
+    const m = document.createElement('span'); m.className = 'aim-dot';
+    m.style.left = (e.clientX - r.left) + 'px'; m.style.top = (e.clientY - r.top) + 'px';
+    e.currentTarget.appendChild(m); setTimeout(() => m.remove(), 900);
+    const num = `number.${p}_movement_angle`;
+    const prev = Number(this._hass.states[num]?.state);
+    const snap = d => Math.max(5, Math.min(120, Math.round(Math.abs(d) / 5) * 5));
+    const moves = [];
+    if (Math.abs(pan) >= 2.5) moves.push([snap(pan), pan > 0 ? 'right' : 'left']);
+    if (Math.abs(tilt) >= 2.5) moves.push([snap(tilt), tilt > 0 ? 'up' : 'down']);
+    if (!moves.length) return;
+    this._aiming = true;
+    try {
+      for (const [deg, dir] of moves) {
+        await this._hass.callService('number', 'set_value', { value: deg }, { entity_id: num });
+        await this._hass.callService('button', 'press', {}, { entity_id: `button.${p}_move_${dir}` });
+      }
+    } catch (err) { console.error('[Frigate] aim', err); this._toast(tr('Camera control failed'), 2500); }
+    finally {
+      if (prev) { try { await this._hass.callService('number', 'set_value', { value: prev }, { entity_id: num }); } catch (_) {} }
+      this._aiming = false;
+    }
+  }
+
+  _ptzCall(action, argument) {
+    const cam = this._activeCam; const entity = cam?.entity; if (!entity || !this._hass) return Promise.resolve();
+    const fail = e => { console.error('[Frigate] ptz', e); this._toast(tr('Camera control failed'), 2500); };
+    // Tapo Control: a move is one press of a button (a step of its movement
+    // angle), a preset is a choice on a select; there is no stop to send.
+    if (cam.ptzTapo) {
+      const p = cam.ptzTapo;
+      if (action === 'move') return this._hass.callService('button', 'press', {}, { entity_id: `button.${p}_move_${argument}` }).catch(fail);
+      if (action === 'preset') return this._hass.callService('select', 'select_option', { option: argument }, { entity_id: `select.${p}_move_to_preset` }).catch(fail);
+      return Promise.resolve();
+    }
+    return this._hass.callService('frigate', 'ptz', { action, argument: argument || '' }, { entity_id: entity })
+      .catch(e => { console.error('[Frigate] ptz', e); this._toast(tr('Camera control failed'), 2500); });
+  }
+
+  _ptzStart(action, argument) {
+    this._ptzStop();
+    this._ptzHeld = { entity: this._activeCam?.entity };
+    this._ptzCall(action, argument);
+    // Tapo steps once per press: keep pressing while the button is held.
+    if (this._activeCam?.ptzTapo && action === 'move') {
+      this._ptzRepeat = setInterval(() => this._ptzCall(action, argument), 700);
+    }
+    // Failsafe: a lost release must not leave the camera turning.
+    clearTimeout(this._ptzTimer);
+    this._ptzTimer = setTimeout(() => this._ptzStop(), 8000);
+  }
+
+  _ptzStop(force) {
+    clearTimeout(this._ptzTimer); this._ptzTimer = null;
+    clearInterval(this._ptzRepeat); this._ptzRepeat = null;
+    if (!this._ptzHeld && !force) return;
+    this._ptzHeld = null;
+    this._ptzCall('stop', '');
+  }
+
   // ── custom stream controls ────────────────────────────────
   // Single view uses the player's own native controls for mute and fullscreen.
   // Grid slots can't (their streams are pointer-events:none so slot clicks
@@ -3254,6 +3591,7 @@ class FrigateModernHassCard extends HTMLElement {
     this._renderStreamCtrl();
     this._renderCamSwitcher();
     this._applyBrowse();
+    this._updatePtz();
     this.shadowRoot.querySelectorAll('[data-viewmode]').forEach(p =>
       p.classList.toggle('active', p.dataset.viewmode === mode));
   }
@@ -3281,6 +3619,7 @@ class FrigateModernHassCard extends HTMLElement {
     this._reviews = cached.reviews||[]; this._kept = cached.kept||[];
     this._renderCamSwitcher(); this._syncStatus();
     await mounting;
+    this._updatePtz();
     this._renderAll();
     await this._loadWindow(true);
   }
@@ -3520,6 +3859,8 @@ class FrigateModernHassCard extends HTMLElement {
                   <button class="btn back ctl-live" id="back">${ICONS.back}<span>${tr('Live')}</span></button>
                 </div>
 <div class="grid-label" id="play-info" hidden></div>
+                <div class="aim" id="aim" hidden></div>
+                <div class="ptz" id="ptz" hidden></div>
               </div>
               <div id="cam-grid" style="display:none"></div>
             </div>
@@ -3842,6 +4183,7 @@ class FrigateModernHassCard extends HTMLElement {
     const v=this.shadowRoot.querySelector('#viewer'); v.style.display='flex';
     this.shadowRoot.querySelector('#feed-top').style.display='flex';
     this._playInfo(null);
+    this._updatePtz(); // a clip is playing: no PTZ pad over it
     this._revealPlayer(this.shadowRoot.querySelector('#eng-wrap'));
   }
   // What is playing, beside the Live button. On a phone a tap on the timeline
@@ -3874,6 +4216,7 @@ class FrigateModernHassCard extends HTMLElement {
     this.shadowRoot.querySelector('#engine').style.display='block';
     this.shadowRoot.querySelector('#feed-top').style.display='none';
     this._renderStreamCtrl();
+    this._updatePtz();
     this._revokeClipBlob();
   }
   _revokeClipBlob() {
@@ -4642,6 +4985,11 @@ class FrigateModernHassCardEditor extends HTMLElement {
       ? this._config.cameras
       : (this._config?.camera_entity ? [{ entity: this._config.camera_entity, name: '' }] : [{ entity: '', name: '' }]);
 
+    // Tapo Control cameras that can be steered: one per set of move buttons.
+    const tapoNames = new Set(this._hass ? Object.keys(this._hass.states)
+      .map(e => (e.match(/^button\.(.+)_move_up$/) || [])[1]).filter(Boolean) : []);
+    const tapoOpts = (sel) => { const all = new Set(tapoNames); if (sel) all.add(sel);
+      return [...all].sort().map(n => `<option value="${n}" ${n===sel?'selected':''}>Tapo Control: ${n}</option>`).join(''); };
     const opts = (sel) => entityList.map(e => `<option value="${e}" ${e===sel?'selected':''}>${e}</option>`).join('');
 
     const layoutId = this._config?.grid_layout || 'auto';
@@ -4671,6 +5019,14 @@ class FrigateModernHassCardEditor extends HTMLElement {
         <input type="color" class="ccol" data-cam-color="${i}" value="${isHex(c.color) ? c.color : camSolid(i, cams.length)}" title="${tr('Colour of this camera on the grid view timeline')}">
         ${isHex(c.color) ? `<button class="crst" data-reset-color="${i}" title="${tr('Back to the default colour')}">↺</button>` : ''}
         <button class="xb" data-remove-cam="${i}" title="${tr('Remove')}">✕</button>` : ''}
+        <div class="cptzrow">
+          <label class="cptz" title="${tr('Show the PTZ pad on this camera')}"><input type="checkbox" data-cam-ptz="${i}" ${c.ptz===false?'':'checked'}> PTZ</label>
+          <select class="cps" data-cam-ptzsrc="${i}" ${c.ptz===false?'disabled':''} title="${tr('What moves this camera')}">
+            <option value="">${tr('Frigate (ONVIF)')}</option>
+            ${tapoOpts(c.ptz_tapo||'')}
+          </select>
+          <label class="cptz cpfl" ${c.ptz_tapo && c.ptz!==false ? '' : 'hidden'} title="${tr('Horizontal field of view in degrees, used to aim by click')}">${tr('FOV')} <input type="number" class="cpf" data-cam-ptzfov="${i}" min="5" max="180" placeholder="30" value="${c.ptz_fov||''}">°</label>
+        </div>
       </div>`).join('');
 
     const hiddenTabs = new Set(this._config?.hidden_tabs || []);
@@ -4697,7 +5053,12 @@ class FrigateModernHassCardEditor extends HTMLElement {
       .field-label{font-size:12px;font-weight:600;margin-bottom:4px;display:block;color:var(--primary-text-color,#111);}
       .section{border-top:1px solid var(--ed-line);padding-top:12px;}
       .hint{color:var(--ed-dim);font-size:11px;}
-      .cr{display:flex;gap:5px;align-items:center;margin-bottom:6px;}
+      .cr{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-bottom:6px;}
+      .cptzrow{flex-basis:100%;display:flex;gap:8px;align-items:center;padding-left:26px;font-size:12px;}
+      .cptz{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;cursor:pointer;}
+      .cpf{width:52px;border:1px solid var(--ed-line);border-radius:6px;font-size:12px;padding:5px;}
+      .cpfl[hidden]{display:none;}
+      .cps{border:1px solid var(--ed-line);border-radius:6px;font-size:12px;padding:5px;min-width:0;max-width:200px;}
       .ce,.cn,.tf,.cs{border:1px solid var(--ed-line);border-radius:6px;font-size:12px;
         background:var(--ed-field);color:var(--primary-text-color,#111);box-sizing:border-box;}
       .ce,.cn{flex:1;padding:7px;min-width:0;}
@@ -4924,6 +5285,11 @@ class FrigateModernHassCardEditor extends HTMLElement {
       this._config = { ...this._config, grid_layout: b.dataset.layout };
       this._render(); this._dispatch();
     }));
+    this.querySelectorAll('[data-cam-ptz]').forEach(el => el.addEventListener('change', () => {
+      const sel = this.querySelector(`[data-cam-ptzsrc="${el.dataset.camPtz}"]`); if (sel) sel.disabled = !el.checked;
+      this._syncFov(el.dataset.camPtz);
+    }));
+    this.querySelectorAll('[data-cam-ptzsrc]').forEach(el => el.addEventListener('change', () => this._syncFov(el.dataset.camPtzsrc)));
     this.querySelectorAll('select,input').forEach(el => el.addEventListener('change', () => this._u()));
     // prevent click outside from closing select while user is choosing
     this.querySelectorAll('select').forEach(sel => sel.addEventListener('mousedown', e => e.stopPropagation()));
@@ -4969,6 +5335,13 @@ class FrigateModernHassCardEditor extends HTMLElement {
       <div class="lay-lbl">${tr(l.label)}</div></button>`;
   }
 
+  // The field of view only matters for a Tapo-driven camera with PTZ on.
+  _syncFov(i) {
+    const row = this.querySelector(`[data-row="${i}"]`); if (!row) return;
+    const on = row.querySelector('[data-cam-ptz]')?.checked !== false && !!row.querySelector('[data-cam-ptzsrc]')?.value;
+    const l = row.querySelector('.cpfl'); if (l) l.hidden = !on;
+  }
+
   _getCams() {
     const rows = [...this.querySelectorAll('[data-row]')];
     return rows.map((r, idx) => {
@@ -4977,12 +5350,19 @@ class FrigateModernHassCardEditor extends HTMLElement {
       // one, so compare it with the default for this place in the list.
       const pickedColor = r.querySelector('[data-cam-color]')?.value || '';
       const color = isHex(pickedColor) && pickedColor.toLowerCase() !== camSolid(idx, rows.length).toLowerCase() ? pickedColor : null;
+      const ptzOn = r.querySelector('[data-cam-ptz]')?.checked !== false;
+      const ptzSrc = r.querySelector('[data-cam-ptzsrc]')?.value || '';
+      const ptzFov = r.querySelector('[data-cam-ptzfov]')?.value || '';
       return {
         entity: r.querySelector('[data-cam-entity]')?.value || '',
         name: r.querySelector('[data-cam-name]')?.value || '',
         // Only carry a size when it is not the default, to keep configs clean.
         ...(span > 1 ? { span } : {}),
         ...(color ? { color } : {}),
+        // On is the default, so only the opt-out and a chosen source are written.
+        ...(ptzOn ? {} : { ptz: false }),
+        ...(ptzOn && ptzSrc ? { ptz_tapo: ptzSrc } : {}),
+        ...(ptzOn && ptzSrc && Number(ptzFov) > 0 ? { ptz_fov: Number(ptzFov) } : {}),
       };
     });
   }

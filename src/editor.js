@@ -32,6 +32,11 @@ export class FrigateModernHassCardEditor extends HTMLElement {
       ? this._config.cameras
       : (this._config?.camera_entity ? [{ entity: this._config.camera_entity, name: '' }] : [{ entity: '', name: '' }]);
 
+    // Tapo Control cameras that can be steered: one per set of move buttons.
+    const tapoNames = new Set(this._hass ? Object.keys(this._hass.states)
+      .map(e => (e.match(/^button\.(.+)_move_up$/) || [])[1]).filter(Boolean) : []);
+    const tapoOpts = (sel) => { const all = new Set(tapoNames); if (sel) all.add(sel);
+      return [...all].sort().map(n => `<option value="${n}" ${n===sel?'selected':''}>Tapo Control: ${n}</option>`).join(''); };
     const opts = (sel) => entityList.map(e => `<option value="${e}" ${e===sel?'selected':''}>${e}</option>`).join('');
 
     const layoutId = this._config?.grid_layout || 'auto';
@@ -61,6 +66,14 @@ export class FrigateModernHassCardEditor extends HTMLElement {
         <input type="color" class="ccol" data-cam-color="${i}" value="${isHex(c.color) ? c.color : camSolid(i, cams.length)}" title="${tr('Colour of this camera on the grid view timeline')}">
         ${isHex(c.color) ? `<button class="crst" data-reset-color="${i}" title="${tr('Back to the default colour')}">↺</button>` : ''}
         <button class="xb" data-remove-cam="${i}" title="${tr('Remove')}">✕</button>` : ''}
+        <div class="cptzrow">
+          <label class="cptz" title="${tr('Show the PTZ pad on this camera')}"><input type="checkbox" data-cam-ptz="${i}" ${c.ptz===false?'':'checked'}> PTZ</label>
+          <select class="cps" data-cam-ptzsrc="${i}" ${c.ptz===false?'disabled':''} title="${tr('What moves this camera')}">
+            <option value="">${tr('Frigate (ONVIF)')}</option>
+            ${tapoOpts(c.ptz_tapo||'')}
+          </select>
+          <label class="cptz cpfl" ${c.ptz_tapo && c.ptz!==false ? '' : 'hidden'} title="${tr('Horizontal field of view in degrees, used to aim by click')}">${tr('FOV')} <input type="number" class="cpf" data-cam-ptzfov="${i}" min="5" max="180" placeholder="30" value="${c.ptz_fov||''}">°</label>
+        </div>
       </div>`).join('');
 
     const hiddenTabs = new Set(this._config?.hidden_tabs || []);
@@ -87,7 +100,12 @@ export class FrigateModernHassCardEditor extends HTMLElement {
       .field-label{font-size:12px;font-weight:600;margin-bottom:4px;display:block;color:var(--primary-text-color,#111);}
       .section{border-top:1px solid var(--ed-line);padding-top:12px;}
       .hint{color:var(--ed-dim);font-size:11px;}
-      .cr{display:flex;gap:5px;align-items:center;margin-bottom:6px;}
+      .cr{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-bottom:6px;}
+      .cptzrow{flex-basis:100%;display:flex;gap:8px;align-items:center;padding-left:26px;font-size:12px;}
+      .cptz{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;cursor:pointer;}
+      .cpf{width:52px;border:1px solid var(--ed-line);border-radius:6px;font-size:12px;padding:5px;}
+      .cpfl[hidden]{display:none;}
+      .cps{border:1px solid var(--ed-line);border-radius:6px;font-size:12px;padding:5px;min-width:0;max-width:200px;}
       .ce,.cn,.tf,.cs{border:1px solid var(--ed-line);border-radius:6px;font-size:12px;
         background:var(--ed-field);color:var(--primary-text-color,#111);box-sizing:border-box;}
       .ce,.cn{flex:1;padding:7px;min-width:0;}
@@ -315,6 +333,11 @@ export class FrigateModernHassCardEditor extends HTMLElement {
       this._config = { ...this._config, grid_layout: b.dataset.layout };
       this._render(); this._dispatch();
     }));
+    this.querySelectorAll('[data-cam-ptz]').forEach(el => el.addEventListener('change', () => {
+      const sel = this.querySelector(`[data-cam-ptzsrc="${el.dataset.camPtz}"]`); if (sel) sel.disabled = !el.checked;
+      this._syncFov(el.dataset.camPtz);
+    }));
+    this.querySelectorAll('[data-cam-ptzsrc]').forEach(el => el.addEventListener('change', () => this._syncFov(el.dataset.camPtzsrc)));
     this.querySelectorAll('select,input').forEach(el => el.addEventListener('change', () => this._u()));
     // prevent click outside from closing select while user is choosing
     this.querySelectorAll('select').forEach(sel => sel.addEventListener('mousedown', e => e.stopPropagation()));
@@ -360,6 +383,13 @@ export class FrigateModernHassCardEditor extends HTMLElement {
       <div class="lay-lbl">${tr(l.label)}</div></button>`;
   }
 
+  // The field of view only matters for a Tapo-driven camera with PTZ on.
+  _syncFov(i) {
+    const row = this.querySelector(`[data-row="${i}"]`); if (!row) return;
+    const on = row.querySelector('[data-cam-ptz]')?.checked !== false && !!row.querySelector('[data-cam-ptzsrc]')?.value;
+    const l = row.querySelector('.cpfl'); if (l) l.hidden = !on;
+  }
+
   _getCams() {
     const rows = [...this.querySelectorAll('[data-row]')];
     return rows.map((r, idx) => {
@@ -368,12 +398,19 @@ export class FrigateModernHassCardEditor extends HTMLElement {
       // one, so compare it with the default for this place in the list.
       const pickedColor = r.querySelector('[data-cam-color]')?.value || '';
       const color = isHex(pickedColor) && pickedColor.toLowerCase() !== camSolid(idx, rows.length).toLowerCase() ? pickedColor : null;
+      const ptzOn = r.querySelector('[data-cam-ptz]')?.checked !== false;
+      const ptzSrc = r.querySelector('[data-cam-ptzsrc]')?.value || '';
+      const ptzFov = r.querySelector('[data-cam-ptzfov]')?.value || '';
       return {
         entity: r.querySelector('[data-cam-entity]')?.value || '',
         name: r.querySelector('[data-cam-name]')?.value || '',
         // Only carry a size when it is not the default, to keep configs clean.
         ...(span > 1 ? { span } : {}),
         ...(color ? { color } : {}),
+        // On is the default, so only the opt-out and a chosen source are written.
+        ...(ptzOn ? {} : { ptz: false }),
+        ...(ptzOn && ptzSrc ? { ptz_tapo: ptzSrc } : {}),
+        ...(ptzOn && ptzSrc && Number(ptzFov) > 0 ? { ptz_fov: Number(ptzFov) } : {}),
       };
     });
   }
